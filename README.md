@@ -29,21 +29,21 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/BradHeff/Arxis-Pentester">
+  <a href="https://github.com/BradHeff/Horizon-Fee-Calculator">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Arxis Penetration Testing Tool</h3>
+<h3 align="center">Horizon Fee Calculator</h3>
 
   <p align="center">
-    Penetration Testing Tool to find vulnerable open ports
+    School Fee's Calculator for Horizon Christian School.
     <br />
-    <a href="https://github.com/BradHeff/Arxis-Pentester"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/BradHeff/Horizon-Fee-Calculator"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/bradheff/Arxis-Pentester/issues">Report Bug</a>
+    <a href="https://github.com/bradheff/Horizon-Fee-Calculator/issues">Report Bug</a>
     ·
-    <a href="https://github.com/bradheff/Arxis-Pentester/issues">Request Feature</a>
+    <a href="https://github.com/bradheff/Horizon-Fee-Calculator/issues">Request Feature</a>
   </p>
 </div>
 
@@ -78,15 +78,9 @@
 
 ## About The Project
 
-[![GUI Screen Shot][product-screenshot]](https://github.com/BradHeff/Arxis-Pentester/blob/main/images/screenshot1.png)
+[![GUI Screen Shot][product-screenshot]](https://github.com/BradHeff/Horizon-Fee-Calculator/blob/main/images/screenshot1.png)
 
-[![About Screen Shot][about-screenshot]](https://github.com/BradHeff/Arxis-Pentester/blob/main/images/Screenshot_about.png)
-
-[![Error Screen Shot][error-screenshot]](https://github.com/BradHeff/Arxis-Pentester/blob/main/images/Screenshot_error.png)
-
-[![Menu Screen Shot][menu-screenshot]](https://github.com/BradHeff/Arxis-Pentester/blob/main/images/Screenshot_menu.png)
-
-This is a tool designed to help with penetration testing a network by listing all open vulnerable ports on all connected hosts from given subnet.<br/>
+This is a static page for calculating school fee's for Horizon Christian School, The project is still under development and much work needs to be put into the pricing and calculations per selected element.<br/>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -120,9 +114,10 @@ Software needed for this application to work
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/bradheff/Arxis-Pentester.git
+   git clone https://github.com/bradheff/Horizon-Fee-Calculator.git
    ```
-2. Install Requirements `python3 -m pip install -r requirements.txt`
+2. Navigate to Horizon-Fee-Calculator `cd Horizon-Fee-Calculator`
+3. Install node modules `npm install`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -130,16 +125,10 @@ Software needed for this application to work
 
 ## Usage
 
-cd into bin directory
-`cd usr/local/bin`
+1. Run project `npm start`
+2. In browser open `http://localhost:3000`
 
-make script executable
-`chmod +x arxis-pentestor`
-
-then run the script file
-`./arxis-pentester`
-
-<!-- _For more examples, please refer to the [Documentation](https://github.com/BradHeff/Arxis-Pentester/wiki)_ -->
+<!-- _For more examples, please refer to the [Documentation](https://github.com/BradHeff/Horizon-Fee-Calculator/wiki)_ -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -147,14 +136,15 @@ then run the script file
 
 ## Roadmap
 
-- [ ] Create Stylish GUI
+- [ ] Create Stylish Webpage
 - [ ] Create Functions and Features
-- [ ] Imported Modules
-  - [ ] GUI in separate module
-  - [ ] Functions in separate module
-  - [ ] Thread control for scanning
+- [ ] Improve Fee Calculations
+  - [ ] Add bus fee's
+  - [ ] add discount % for Consession Card
+  - [ ] return correct pricing
+- [ ] Return table view of fee's per term
 
-See the [open issues](https://github.com/bradheff/Arxis-Pentester/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/bradheff/Horizon-Fee-Calculator/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -191,7 +181,7 @@ Distributed under the GPL-3.0 License. See `LICENSE` for more information.
 
 Brad Heffernan - [@bradheffernan](https://twitter.com/bradheffernan) - brad.heffernan83@outlook.com
 
-Project Link: [https://github.com/bradheff/Arxis-Pentester](https://github.com/bradheff/Arxis-Pentester)
+Project Link: [https://github.com/bradheff/Horizon-Fee-Calculator](https://github.com/bradheff/Horizon-Fee-Calculator)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -206,16 +196,16 @@ Project Link: [https://github.com/bradheff/Arxis-Pentester](https://github.com/b
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/bradheff/Arxis-Pentester.svg?style=for-the-badge
-[contributors-url]: https://github.com/bradheff/Arxis-Pentester/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/bradheff/Arxis-Pentester.svg?style=for-the-badge
-[forks-url]: https://github.com/bradheff/Arxis-Pentester/network/members
-[stars-shield]: https://img.shields.io/github/stars/bradheff/Arxis-Pentester.svg?style=for-the-badge
-[stars-url]: https://github.com/bradheff/Arxis-Pentester/stargazers
-[issues-shield]: https://img.shields.io/github/issues/bradheff/Arxis-Pentester.svg?style=for-the-badge
-[issues-url]: https://github.com/bradheff/Arxis-Pentester/issues
-[license-shield]: https://img.shields.io/github/license/bradheff/Arxis-Pentester.svg?style=for-the-badge
-[license-url]: https://github.com/BradHeff/Arxis-Pentester/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/bradheff/Horizon-Fee-Calculator.svg?style=for-the-badge
+[contributors-url]: https://github.com/bradheff/Horizon-Fee-Calculator/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/bradheff/Horizon-Fee-Calculator.svg?style=for-the-badge
+[forks-url]: https://github.com/bradheff/Horizon-Fee-Calculator/network/members
+[stars-shield]: https://img.shields.io/github/stars/bradheff/Horizon-Fee-Calculator.svg?style=for-the-badge
+[stars-url]: https://github.com/bradheff/Horizon-Fee-Calculator/stargazers
+[issues-shield]: https://img.shields.io/github/issues/bradheff/Horizon-Fee-Calculator.svg?style=for-the-badge
+[issues-url]: https://github.com/bradheff/Horizon-Fee-Calculator/issues
+[license-shield]: https://img.shields.io/github/license/bradheff/Horizon-Fee-Calculator.svg?style=for-the-badge
+[license-url]: https://github.com/BradHeff/Horizon-Fee-Calculator/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/brad-heffernan83/
 [product-screenshot]: images/screenshot1.png
