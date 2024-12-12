@@ -1,0 +1,266 @@
+:root {
+    --vs-transition-timing-function: cubic-bezier(1, 0.5, 0.8, 1);
+    --vs-transition-duration: 0.15s;
+    --vs-controls-size: 1;
+    --spinners-content: #051225;
+    --spinners-contentBar: #292b2c;
+    --spinners-background: #FFFFFF;
+    --spinners-backgroundBack: #000000;
+
+}
+
+/* KeyFrames */
+@-webkit-keyframes vSelectSpinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes vSelectSpinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dropdown Default Transition */
+.vs__fade-enter-active,
+.vs__fade-leave-active {
+    pointer-events: none;
+    transition: opacity var(--vs-transition-duration) var(--vs-transition-timing-function);
+}
+
+.vs__fade-enter,
+.vs__fade-leave-to {
+    opacity: 0;
+}
+
+.vs__spinner {
+    align-self: center;
+    opacity: 0;
+    font-size: 5px;
+    text-indent: -9999em;
+    overflow: hidden;
+    border-top: 0.9em solid rgba(100, 100, 100, 0.1);
+    border-right: 0.9em solid rgba(100, 100, 100, 0.1);
+    border-bottom: 0.9em solid rgba(100, 100, 100, 0.1);
+    border-left: 0.9em solid rgba(60, 60, 60, 0.45);
+    transform: translateZ(0) scale(var(--vs-controls--spinner-size, var(--vs-controls-size)));
+    animation: vSelectSpinner 1.1s infinite linear;
+    transition: opacity 0.1s;
+}
+
+.vs__spinner,
+.vs__spinner:after {
+    border-radius: 50%;
+    width: 5em;
+    height: 5em;
+    transform: scale(var(--vs-controls--spinner-size, var(--vs-controls-size)));
+}
+
+/* Loading Spinner States */
+.vs--loading .vs__spinner {
+    opacity: 1;
+}
+
+.v-modal--inset {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.v-modal--fixed {
+    position: fixed;
+}
+
+.v-modal--absolute {
+    position: absolute;
+}
+
+.v-modal--overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.v-modal--prevent-none {
+    pointer-events: none;
+}
+
+.v-modal--prevent-auto {
+    pointer-events: auto;
+}
+
+.v-modal--outline-none:focus {
+    outline: none;
+}
+
+.v-modal__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.v-modal__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: .25rem;
+}
+
+.v-modal-enter-active,
+.v-modal-leave-active {
+    transition: opacity 0.2s;
+}
+
+.v-modal-enter,
+.v-modal-leave-to {
+    opacity: 0;
+}
+
+.modal-window__spinner .spinner-text {
+    margin-top: 20px;
+    font-size: 1.7em;
+    color: #b5b6bb;
+    width: 100%;
+    height: 100%;
+}
+
+p.spin-text {
+    position: relative;
+    text-transform: uppercase;
+    font-size: 1.7em;
+    letter-spacing: 4px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #b5b6bb, #fff, #b5b6bb);
+    background-repeat: no-repeat;
+    background-size: 80%;
+    animation: animate 2s linear infinite;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0);
+}
+
+@keyframes animate {
+    0% {
+        background-position: -500%;
+    }
+
+    100% {
+        background-position: 500%;
+    }
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+}
+
+.lds-dual-ring .timer {
+    position: absolute;
+    top: 13px;
+    left: 16px;
+}
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader {
+    width: 20em;
+    height: 20em;
+    font-size: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.loader .face {
+    position: absolute;
+    border-radius: 50% !important;
+    border-style: solid;
+    animation: spinning-circles 3s linear infinite;
+}
+
+.loader .face:nth-child(1) {
+    width: 100%;
+    height: 100%;
+    color: #ff034f;
+    border-color: #ff034f transparent transparent #ff034f;
+    border-width: 0.2em 0.2em 0em 0em;
+    --deg: -45deg;
+    animation-direction: normal;
+}
+
+.loader .face:nth-child(2) {
+    width: 70%;
+    height: 70%;
+    color: #00b472;
+    border-color: #00b472 #00b472 transparent transparent;
+    border-width: 0.2em 0em 0em 0.2em;
+    --deg: -135deg;
+    animation-direction: reverse;
+}
+
+.loader .face:nth-child(2) .circle::before {
+    background-color: #00b472;
+}
+
+.loader .circle {
+    position: absolute;
+    width: 50%;
+    height: 0.1em;
+    top: 50%;
+    left: 50%;
+    background-color: transparent;
+    transform: rotate(var(--deg));
+    transform-origin: left;
+}
+
+.loader .circle::before {
+    position: absolute;
+    top: -0.5em;
+    right: -0.5em;
+    content: '';
+    background-color: #ff034f;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    box-shadow: 0 0 2em, 0 0 4em, 0 0 6em, 0 0 8em, 0 0 10em, 0 0 0 0.5em rgba(255, 255, 0, 0.1);
+}
+
+@keyframes spinning-circles {
+    to {
+        transform: rotate(1turn);
+    }
+}

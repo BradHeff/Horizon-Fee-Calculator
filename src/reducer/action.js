@@ -1,0 +1,31 @@
+import { NAVBAR, TOGGLE, B2T, NEXT, AUTH, LOGIN } from "./constants";
+
+export const setNavbar = (link) => ({
+  type: NAVBAR,
+  payload: link,
+});
+
+export const setToggle = (link) => ({
+  type: TOGGLE,
+  payload: link,
+});
+
+export const setB2T = (link) => ({
+  type: B2T,
+  payload: link,
+});
+
+export const setNext = (link) => ({
+  type: NEXT,
+  payload: link,
+});
+
+export const setNeedAuth = (link) => ({
+  type: AUTH,
+  payload: link,
+});
+
+export const setLogin = (link) => ({
+  type: LOGIN,
+  payload: link,
+});

@@ -1,0 +1,73 @@
+
+.custom-shape-divider-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-bottom-Triangle,
+.custom-shape-divider-bottom-Tilt,
+.custom-shape-divider-bottom-Tilt-Left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 52px;
+}
+
+.custom-shape-divider-bottom-Tilt-Left svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 150px;  
+}
+
+.custom-shape-divider-bottom-Triangle svg,
+.custom-shape-divider-bottom-Tilt svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 150px;
+  transform: rotateY(180deg);
+}
+
+
+.custom-shape-divider-bottom .shape-fill-white,
+.custom-shape-divider-bottom-Tilt .shape-fill-white,
+.custom-shape-divider-bottom-Tilt-Left .shape-fill-white,
+.custom-shape-divider-bottom-Triangle .shape-fill-white {
+    fill: var(--bg-white);
+}
+
+.custom-shape-divider-bottom .shape-fill-grey,
+.custom-shape-divider-bottom-Tilt .shape-fill-grey,
+.custom-shape-divider-bottom-Tilt-Left .shape-fill-grey,
+.custom-shape-divider-bottom-Triangle .shape-fill-grey {
+    fill: var(--heff-bg-grey);
+}
+
+.custom-shape-divider-bottom .shape-fill-purple,
+.custom-shape-divider-bottom-Tilt .shape-fill-purple,
+.custom-shape-divider-bottom-Tilt-Left .shape-fill-purple,
+.custom-shape-divider-bottom-Triangle .shape-fill-purple {
+    fill: var(--purple-bg);
+}
+
+.custom-shape-divider-bottom .shape-fill-footer,
+.custom-shape-divider-bottom-Tilt .shape-fill-footer,
+.custom-shape-divider-bottom-Tilt-Left .shape-fill-footer,
+.custom-shape-divider-bottom-Triangle .shape-fill-footer {
+    fill: var(--footer-bg);
+}
