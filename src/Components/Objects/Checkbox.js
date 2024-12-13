@@ -24,7 +24,10 @@ class Checkbox extends Component {
       : this.state.total - updateValue;
 
     this.setState({ total: newTotal });
-    this.props.onUpdate(newTotal, this.props.unique);
+
+    // Pass the option name to the onUpdate function to identify the checkbox
+    const additionalOption = e.target.checked ? e.target.name : null;
+    this.props.onUpdate(newTotal, this.props.unique, additionalOption);
   }
 
   render() {

@@ -16,7 +16,7 @@
       "title": "Extras",
       "type": "checkbox",
       "options": {
-        "Concession Card": 0,
+        "Concession Card": 1,
         "Bus Fee": 250
       }
     }

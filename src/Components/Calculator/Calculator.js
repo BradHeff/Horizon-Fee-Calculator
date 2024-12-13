@@ -36,46 +36,42 @@ class Calculator extends React.Component {
   }
 
   applyConcessionDiscount(value, numChildren) {
-    const concessionRates = [1275, 2230, 2870, 0]; // Based on "2025 School Card Tuition Fee"
-    return (
-      concessionRates[Math.min(numChildren - 1, concessionRates.length - 1)] ||
-      value
-    );
+    const concessionRates = [1620, 1215, 810, 0]; // Based on "2025 School Card Tuition Fee"
+    console.log(concessionRates[numChildren]);
+    return concessionRates[numChildren] || value;
   }
 
   updateTotal(newValue, caller, additionalOption = null) {
     const newStateElements = { ...this.state.elements, [caller]: newValue };
     const newAdditionalOptions = { ...this.state.additionalOptions };
 
-    if (additionalOption) {
-      newAdditionalOptions[caller] = additionalOption;
-    }
+    // if (additionalOption) {
+    //   newAdditionalOptions[caller] = additionalOption;
+    // }
 
-    const concessionCardSelected =
-      newAdditionalOptions["Extras"]?.includes("Concession");
+    console.log(newStateElements["1"]);
 
-    // Determine the number of children from the dropdown
+    const concessionCardSelected = newStateElements["1"] === 1 ? true : false;
+
     const numChildren = parseInt(this.config.elements[0].options["0"], 10);
 
     // Calculate base child fees
     const baseChildFees = this.config.elements[0].options["0"] || 0;
 
-    console.log("price of base child fees: $", baseChildFees);
-    // Adjust child fees if "Concession Card" is selected
-    const childFees = concessionCardSelected
-      ? this.applyConcessionDiscount(baseChildFees, numChildren)
-      : baseChildFees;
-    console.log("price of child fees: $", childFees);
+    console.log(concessionCardSelected);
+
+    const newChildFees =
+      concessionCardSelected === true
+        ? this.applyConcessionDiscount(baseChildFees, numChildren)
+        : baseChildFees;
+
     // Adjust bus fees
-    const busFees = newAdditionalOptions["Extras"]?.includes("Bus Fee")
-      ? this.applyBusFees(numChildren)
-      : 0;
+    const busFees =
+      newStateElements["1"] === 250 ? this.applyBusFees(numChildren) : 0;
 
-    // Recalculate the total
     const newTotal =
-      this.calculateTotal(newStateElements) - childFees + busFees;
+      this.calculateTotal(newStateElements) - newChildFees + busFees;
 
-    // Update state
     this.setState({
       elements: newStateElements,
       total: newTotal,
@@ -86,7 +82,8 @@ class Calculator extends React.Component {
 
   applyBusFees(numChildren) {
     const busRates = [250, 150, 100, 0];
-    return busRates[Math.min(numChildren - 1, busRates.length - 1)];
+    console.log(busRates[numChildren]);
+    return busRates[numChildren];
   }
 
   render() {
