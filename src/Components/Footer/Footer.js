@@ -75,26 +75,6 @@ const Footer = (props) => {
                   >
                     Home
                   </Links>
-                  <Links
-                    to="features"
-                    className="nav-link"
-                    spy={true}
-                    smooth={true}
-                    offset={0}
-                    duration={500}
-                  >
-                    Features
-                  </Links>
-                  <Links
-                    to="pricing"
-                    className="nav-link"
-                    spy={true}
-                    smooth={true}
-                    offset={0}
-                    duration={500}
-                  >
-                    Pricing
-                  </Links>
                 </>
               ) : (
                 <Link className="nav-link" to="/">

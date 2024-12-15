@@ -4,11 +4,9 @@ import Tuition from "../../Components/Calculator/Tuition";
 
 const Main = (props) => {
   return (
-    <div className="main-wrapper">
+    <div className="main-wrapper" id="home">
       <B2t show={props.show} />
       <Tuition />
-      {/*<Intro id='home'/>*/}
-      {/*<Features shape='tilt' left={true} color='white' size='sm' id='features' foot={false} add={true} white={false} />*/}
     </div>
   );
 };

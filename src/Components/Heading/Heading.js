@@ -20,7 +20,7 @@ const Heading = (props) => {
       collapseOnSelect
       expand="lg"
       expanded={expanded}
-      className={props.navbar}
+      className="shrink"
       fixed="top"
     >
       <Container>
@@ -50,17 +50,6 @@ const Heading = (props) => {
               onClick={closeNav}
             >
               Home
-            </Links>
-            <Links
-              to="fees"
-              className="nav-link"
-              spy={true}
-              smooth={true}
-              offset={0}
-              duration={500}
-              onClick={closeNav}
-            >
-              Fees Calculator
             </Links>
           </Nav>
         </Navbar.Collapse>

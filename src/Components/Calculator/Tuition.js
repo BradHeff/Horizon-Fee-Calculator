@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { animated, useSpring } from "react-spring";
-
+import FooterStyle from "../../Styles/StyleFooter.js";
 import { formatDollars } from "../Objects/Currancy.js";
 const standardCosts = {
   foundation: [2550, 1910, 1275],
@@ -132,7 +132,7 @@ function Tuition() {
           <div className="col-12 col-md-6">
             <div className="card shadow-lg p-4">
               <div className="card-body">
-                <h2 className="card-title">Horizon Fee Calculator</h2>
+                <h3 className="title text-center">Horizon Fee Calculator</h3>
                 <div className="row align-items-center justify-content-center mt-20">
                   <div className="col-8">
                     {children.map((child, index) => (
@@ -185,17 +185,26 @@ function Tuition() {
           <div className="col-12 col-md-6">
             <div className="card shadow-lg p-4">
               <div className="card-body total">
-                <h2 className="card-title">Fee Outcome</h2>
-                <animated.span>
-                  {animatedProps.total.to((val) =>
-                    formatDollars(val.toFixed(2))
-                  )}
-                </animated.span>
+                <h3 className="title text-center">Fee Outcome</h3>
+                <div
+                  className="text-bold"
+                  style={{ fontFamily: "var(--head-font)", fontSize: "20px" }}
+                >
+                  Total Cost:&nbsp;
+                  <span className="text-success">
+                    <animated.span>
+                      {animatedProps.total.to((val) =>
+                        formatDollars(val.toFixed(2))
+                      )}
+                    </animated.span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <FooterStyle />
     </div>
   );
 }
