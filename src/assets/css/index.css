@@ -2474,7 +2474,9 @@ p {
     transform: scale(1);
   }
 }
-
+.table-responsive {
+  overflow-x: auto;
+}
 .pop-effect {
   animation: popEffect 0.3s ease-in-out;
 }
