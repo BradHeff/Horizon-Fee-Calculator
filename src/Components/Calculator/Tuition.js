@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { animated, useSpring } from "react-spring";
 import FooterStyle from "../../Styles/StyleFooter.js";
 import { formatDollars } from "../Objects/Currancy.js";
@@ -78,10 +78,25 @@ function Tuition() {
   const [hasConcessionCard, setHasConcessionCard] = useState(false);
   const [hasBusFee, setHasBusFee] = useState(false);
   const [total, setTotal] = useState(0);
+  const totalRef = useRef(null);
+  const [showDropdowns, setShowDropdowns] = useState([true, false, false]);
 
   const addChild = () => {
     if (children.length < 3) {
       setChildren([...children, ""]);
+      setShowDropdowns((prevState) => {
+        const newState = [...prevState];
+        newState[children.length] = false;
+        return newState;
+      });
+      // Use setTimeout to delay the animation
+      setTimeout(() => {
+        setShowDropdowns((prevState) => {
+          const newState = [...prevState];
+          newState[children.length] = true;
+          return newState;
+        });
+      }, 50); // Small delay to ensure the new dropdown is rendered
     }
   };
 
@@ -123,6 +138,16 @@ function Tuition() {
   const animatedProps = useSpring({
     total: total,
     from: { total: 0 },
+    onRest: () => {
+      if (totalRef.current) {
+        totalRef.current.classList.add("pop-effect");
+        setTimeout(() => {
+          if (totalRef.current) {
+            totalRef.current.classList.remove("pop-effect");
+          }
+        }, 300);
+      }
+    },
   });
 
   return (
@@ -136,7 +161,12 @@ function Tuition() {
                 <div className="row align-items-center justify-content-center mt-20">
                   <div className="col-8">
                     {children.map((child, index) => (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        className={`dropdown-container ${
+                          showDropdowns[index] ? "show" : ""
+                        }`}
+                      >
                         <YearLevelSelector
                           onSelect={(year) => updateChildYear(year, index)}
                           index={index}
@@ -186,18 +216,161 @@ function Tuition() {
             <div className="card shadow-lg p-4">
               <div className="card-body total">
                 <h3 className="title text-center">Fee Outcome</h3>
-                <div
-                  className="text-bold"
-                  style={{ fontFamily: "var(--head-font)", fontSize: "20px" }}
-                >
-                  Total Cost:&nbsp;
-                  <span className="text-success">
-                    <animated.span>
-                      {animatedProps.total.to((val) =>
-                        formatDollars(val.toFixed(2))
-                      )}
-                    </animated.span>
-                  </span>
+                <div className="row align-items-center justify-content-center">
+                  <div className="col-12">
+                    <div
+                      className="text-bold"
+                      style={{
+                        fontFamily: "var(--head-font)",
+                        fontSize: "20px",
+                      }}
+                    >
+                      Total Cost:&nbsp;
+                      <span className="text-success" ref={totalRef}>
+                        <animated.span>
+                          {animatedProps.total.to((val) =>
+                            formatDollars(val.toFixed(2))
+                          )}
+                        </animated.span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="col-12">
+                    <table className="table table-bordered table-hover">
+                      <thead className="table-light">
+                        <tr>
+                          <th scope="col">Fee Type</th>
+                          <th scope="col">1st Child</th>
+                          <th scope="col">2nd Child</th>
+                          <th scope="col">3rd Child</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">School Fees</th>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  children[0]
+                                    ? hasConcessionCard
+                                      ? concessionFee[children[0]][0]
+                                      : standardCosts[children[0]][0]
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  children[1]
+                                    ? hasConcessionCard
+                                      ? concessionFee[children[1]][1]
+                                      : standardCosts[children[1]][1]
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  children[2]
+                                    ? hasConcessionCard
+                                      ? concessionFee[children[2]][2]
+                                      : standardCosts[children[2]][2]
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Bus Fees</th>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(hasBusFee ? busFee.child1 : 0)
+                              )}
+                            </animated.span>
+                          </td>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  hasBusFee && children.length > 1
+                                    ? busFee.child2
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  hasBusFee && children.length > 2
+                                    ? busFee.child3
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Discount</th>
+                          <td>-</td>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  children[1]
+                                    ? hasConcessionCard
+                                      ? concessionFee[children[1]][0] -
+                                        concessionFee[children[1]][1]
+                                      : standardCosts[children[1]][0] -
+                                        standardCosts[children[1]][1]
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  children[2]
+                                    ? hasConcessionCard
+                                      ? concessionFee[children[2]][0] -
+                                        concessionFee[children[2]][2]
+                                      : standardCosts[children[2]][0] -
+                                        standardCosts[children[2]][2]
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr className="table-secondary">
+                          <th scope="row">Total</th>
+                          <td>
+                            <animated.span>
+                              {animatedProps.total.to((val) =>
+                                formatDollars(val.toFixed(2))
+                              )}
+                            </animated.span>
+                          </td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
