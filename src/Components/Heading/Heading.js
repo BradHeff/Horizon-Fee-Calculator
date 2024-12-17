@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import * as Scroll from "react-scroll";
-
 import Logo from "../../assets/images/favicon.png";
-const Links = Scroll.Link;
 
 const Heading = (props) => {
   const [expanded, setExpanded] = useState(false);
@@ -24,7 +21,13 @@ const Heading = (props) => {
       fixed="top"
     >
       <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand
+          href={
+            props.campus === 0
+              ? "https://balaklava.horizon.sa.edu.au/"
+              : "https://clare.horizon.sa.edu.au/"
+          }
+        >
           <img
             src={Logo}
             alt={Logo}
@@ -40,17 +43,17 @@ const Heading = (props) => {
         />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto">
-            <Links
-              to="home"
+            <a
+              href={
+                props.campus === 0
+                  ? "https://balaklava.horizon.sa.edu.au/"
+                  : "https://clare.horizon.sa.edu.au/"
+              }
               className="nav-link"
-              spy={true}
-              smooth={true}
-              offset={0}
-              duration={500}
               onClick={closeNav}
             >
               Home
-            </Links>
+            </a>
           </Nav>
         </Navbar.Collapse>
       </Container>

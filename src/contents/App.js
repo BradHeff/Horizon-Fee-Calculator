@@ -1,11 +1,11 @@
-import React,{Component} from "react";
+import React, { Component } from "react";
 // import { Routes, Route, Navigate, useLocation} from 'react-router-dom';
 // import { animateScroll as scroller } from 'react-scroll'
 
 import "../assets/css/campus-selector.css"; // Add this line
-import {setB2T,setCampus,setNavbar,setToggle} from "../reducer/action";
+import { setB2T, setCampus, setNavbar, setToggle } from "../reducer/action";
 
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 import Layout from "../HOC/Layout";
 import Main from "./Main/Main";
@@ -50,17 +50,24 @@ class App extends Component {
   render() {
     return (
       <>
-      {this.props.campus === null? (
-        <CampusSelector onSelectCampus={this.props.onSetCampus} />
-      ): (
-        <Layout
-          navbar={this.props.sbar}
-          onSetToggle={this.props.onSetToggle}
-          toggle={this.props.toggle}
-        >
-          <Main onSetNavbar={this.props.onSetNavbar} show={this.props.show} campus={this.props.campus}/>
-        </Layout>
-      )}</>
+        {this.props.campus === null ? (
+          <CampusSelector onSelectCampus={this.props.onSetCampus} />
+        ) : (
+          <Layout
+            navbar={this.props.sbar}
+            onSetToggle={this.props.onSetToggle}
+            toggle={this.props.toggle}
+            campus={this.props.campus}
+          >
+            <Main
+              onSetNavbar={this.props.onSetNavbar}
+              show={this.props.show}
+              campus={this.props.campus}
+              onSetCampus={this.props.onSetCampus}
+            />
+          </Layout>
+        )}
+      </>
     );
   }
 }
@@ -68,19 +75,25 @@ const CampusSelector = ({ onSelectCampus }) => (
   <div className="campus-selector">
     <h1 className="campus-selector__title">Select Your Campus</h1>
     <div className="campus-selector__options">
-      <div 
+      <div
         className="campus-selector__option"
         onClick={() => onSelectCampus(0)}
       >
         <h2>Balaklva Campus</h2>
-        <p>Select this option if you're enrolling at our Horizon Christian School Balaklva campus.</p>
+        <p>
+          Select this option if you're enrolling at our Horizon Christian School
+          Balaklva campus.
+        </p>
       </div>
-      <div 
+      <div
         className="campus-selector__option"
         onClick={() => onSelectCampus(1)}
       >
         <h2>Clare Campus</h2>
-        <p>Select this option if you're enrolling at our Clare Valley Horizon Christian School campus.</p>
+        <p>
+          Select this option if you're enrolling at our Clare Valley Horizon
+          Christian School campus.
+        </p>
       </div>
     </div>
   </div>
