@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
-import { animated, useSpring } from "react-spring";
+import React,{useEffect,useRef,useState} from "react";
+import {animated,useSpring} from "react-spring";
 import FooterStyle from "../../Styles/StyleFooter.js";
-import { formatDollars } from "../Objects/Currancy.js";
+import {formatDollars} from "../Objects/Currancy.js";
 
 // Add this constant near the top of the file, with other constants
 const getClearLevy = (yearLevel) => {
@@ -30,6 +30,22 @@ const standardCosts = {
   year12: [3240, 2430, 1620, 0],
 };
 
+const standardCostsClare = {
+  foundation: [1275, 955, 637, 0],
+  year1: [1275, 955, 637, 0],
+  year2: [1275, 955, 637, 0],
+  year3: [1275, 955, 637, 0],
+  year4: [1400, 1050, 700, 0],
+  year5: [1400, 1050, 700, 0],
+  year6: [1400, 1050, 700, 0],
+  year7: [1540, 1155, 770, 0],
+  year8: [1540, 1155, 770, 0],
+  year9: [1540, 1155, 770, 0],
+  year10: [1620, 1215, 810, 0],
+  year11: [1620, 1215, 810, 0],
+  year12: [1620, 1215, 810, 0],
+};
+
 const concessionFee = {
   foundation: [1275, 955, 640, 0],
   year1: [1275, 955, 640, 0],
@@ -44,6 +60,23 @@ const concessionFee = {
   year10: [1620, 1215, 810, 0],
   year11: [1620, 1215, 810, 0],
   year12: [1620, 1215, 810, 0],
+};
+
+
+const concessionFeeClare = {
+  foundation: [637, 477, 320, 0],
+  year1: [637, 477, 320, 0],
+  year2: [637, 477, 320, 0],
+  year3: [637, 477, 320, 0],
+  year4: [700, 525, 350, 0],
+  year5: [700, 525, 350, 0],
+  year6: [700, 525, 350, 0],
+  year7: [770, 577, 385, 0],
+  year8: [770, 577, 385, 0],
+  year9: [770, 577, 385, 0],
+  year10: [810, 637, 405, 0],
+  year11: [810, 637, 405, 0],
+  year12: [810, 637, 405, 0],
 };
 
 const busFee = {
@@ -86,7 +119,7 @@ function YearLevelSelector({ onSelect, index }) {
   );
 }
 
-function Tuition() {
+function Tuition(props) {
   const [children, setChildren] = useState([""]);
   const [hasConcessionCard, setHasConcessionCard] = useState(false);
   const [hasBusFee, setHasBusFee] = useState(false);
@@ -94,6 +127,13 @@ function Tuition() {
   const totalRef = useRef(null);
   const [showDropdowns, setShowDropdowns] = useState([true, false, false]);
   const [sortedChildren, setSortedChildren] = useState([]);
+  // Add a new state for campus
+  const [campus, setCampus] = useState(props.campus || 0);
+  
+  // Add this useEffect to recalculate total when campus changes
+  useEffect(() => {
+    calculateTotal(children, hasConcessionCard, hasBusFee);
+  }, [campus]);
 
   const addChild = () => {
     setChildren([...children, ""]);
@@ -120,33 +160,31 @@ function Tuition() {
   };
 
   const calculateTotal = (childrenYears, concession, bus) => {
-    let newTotal = 0;
-    // Sort children by age (assuming year12 is oldest, foundation is youngest)
-    const sortedChildren = [...childrenYears]
-      .filter(Boolean)
-      .sort((a, b) => yearLevels.indexOf(b) - yearLevels.indexOf(a));
+  let newTotal = 0;
+  const sortedChildren = [...childrenYears]
+    .filter(Boolean)
+    .sort((a, b) => yearLevels.indexOf(b) - yearLevels.indexOf(a));
 
-    sortedChildren.forEach((year, index) => {
-      if (index < 3) {
-        // Only charge tuition fees for first three children
-        const costs = concession ? concessionFee[year] : standardCosts[year];
-        newTotal += costs[Math.min(index, 2)] || 0;
-      }
+  sortedChildren.forEach((year, index) => {
+    if (index < 3) {
+      const costs = concession
+        ? (campus === 0 ? concessionFee : concessionFeeClare)[year]
+        : (campus === 0 ? standardCosts : standardCostsClare)[year];
+      newTotal += costs[Math.min(index, 2)] || 0;
+    
 
-      // Always charge CLEAR levy for all children
       newTotal += getClearLevy(year);
-      // Add bus fee if applicable
-      if (bus) {
-        if (index === 0) newTotal += busFee.child1;
-        else if (index === 1) newTotal += busFee.child2;
-        else if (index === 2) newTotal += busFee.child3;
-        // Fourth child and beyond are free for bus fee, so no need to add anything
-      }
-    });
+    }
+    if (bus) {
+      if (index === 0) newTotal += busFee.child1;
+      else if (index === 1) newTotal += busFee.child2;
+      else if (index === 2) newTotal += busFee.child3;
+    }
+  });
 
-    setTotal(newTotal);
-    return sortedChildren; // Return the sorted children array
-  };
+  setTotal(newTotal);
+  return sortedChildren;
+};
 
   const handleConcessionChange = (e) => {
     setHasConcessionCard(e.target.checked);
@@ -195,7 +233,29 @@ function Tuition() {
   return (
     <div className="section section-lg">
       <div className="container h-100">
-        <div className="row align-items-center justify-content-center h-100">
+        <div className="row align-items-center h-100">
+          <div className="col-12 mb-4">
+            <div className="card shadow-lg p-4">
+              <div className="card-body">
+                <h3 className="title text-center mb-3">Change Campus</h3>
+                <h4 className="text-center m-0 p-0">Current: <span className="text-success" style={{fontWeight: 700}}>{campus===0?"Balaklava":"Clare"}</span></h4>
+                <div className="d-flex justify-content-center mt-3">
+                  <button
+                    className={`btn ${campus === 0 ? 'btn-primary' : 'btn-outline-primary'} me-2`}
+                    onClick={() => setCampus(0)}
+                  >
+                    Balaklva Campus
+                  </button>
+                  <button
+                    className={`btn ${campus === 1 ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => setCampus(1)}
+                  >
+                    Clare Campus
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="col-12 col-md-6">
             <div className="card shadow-lg p-4">
               <div className="card-body">
@@ -265,7 +325,7 @@ function Tuition() {
           <div className="col-12 col-md-6">
             <div className="card shadow-lg p-4">
               <div className="card-body total">
-                <h3 className="title text-center">Fee Outcome</h3>
+                <h3 className="title text-center"><span className="text-success" style={{fontWeight: 700}}>{campus===0?"Balaklava":"Clare"}</span> Fee Outcome</h3>
                 <div className="row align-items-center justify-content-center">
                   <div className="col-12">
                     <div
@@ -319,10 +379,10 @@ function Tuition() {
                                   formatDollars(
                                     child && index < 3
                                       ? hasConcessionCard
-                                        ? concessionFee[child][
+                                        ? (campus === 0 ? concessionFee : concessionFeeClare)[child][
                                             Math.min(index, 2)
                                           ]
-                                        : standardCosts[child][
+                                        : (campus === 0 ? standardCosts : standardCostsClare)[child][
                                             Math.min(index, 2)
                                           ]
                                       : 0
@@ -370,26 +430,26 @@ function Tuition() {
                           <th scope="row">Discount</th>
                           <td>-</td>
                           {sortedChildren.slice(1).map((child, index) => (
-                            <td key={index}>
-                              <animated.span>
-                                {animatedProps.total.to(() =>
-                                  formatDollars(
-                                    child
-                                      ? hasConcessionCard
-                                        ? concessionFee[child][0] -
-                                          concessionFee[child][
-                                            Math.min(index + 1, 2)
-                                          ]
-                                        : standardCosts[child][0] -
-                                          standardCosts[child][
-                                            Math.min(index + 1, 2)
-                                          ]
-                                      : 0
-                                  )
-                                )}
-                              </animated.span>
-                            </td>
-                          ))}
+                          <td key={index}>
+                            <animated.span>
+                              {animatedProps.total.to(() =>
+                                formatDollars(
+                                  child
+                                    ? hasConcessionCard
+                                      ? (campus === 0 ? concessionFee : concessionFeeClare)[child][0] -
+                                        (campus === 0 ? concessionFee : concessionFeeClare)[child][
+                                          Math.min(index + 1, 2)
+                                        ]
+                                      : (campus === 0 ? standardCosts : standardCostsClare)[child][0] -
+                                        (campus === 0 ? standardCosts : standardCostsClare)[child][
+                                          Math.min(index + 1, 2)
+                                        ]
+                                    : 0
+                                )
+                              )}
+                            </animated.span>
+                          </td>
+                        ))}
                         </tr>
                       </tbody>
                       <tfoot>

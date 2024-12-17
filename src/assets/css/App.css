@@ -125,7 +125,7 @@
 
 .main-wrapper {
   overflow: hidden;
-  padding-top: 120px;
+  padding-top: 60px;
 }
 @media (max-width: 992px) {
   .main-wrapper {
