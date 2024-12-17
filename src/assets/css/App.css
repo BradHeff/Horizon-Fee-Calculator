@@ -406,6 +406,16 @@
   overflow: hidden;
 }
 
+/* Checkbox styles */
+.checkbox-style input[type="checkbox"] {
+  border-color: var(--success-bg);
+}
+
+.checkbox-style input[type="checkbox"]:checked {
+  background-color: var(--success-bg);
+  border-color: var(--success-bg);
+}
+
 .btn-hover::after {
   content: "";
   position: absolute;

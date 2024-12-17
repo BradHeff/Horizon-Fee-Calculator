@@ -102,11 +102,11 @@ const yearLevels = [
   "year12",
 ];
 
-function YearLevelSelector({ onSelect, index }) {
+function YearLevelSelector({ onSelect, index, isNew, value }) {
   return (
-    <div className="select-style-2">
+    <div className={`select-style-2 ${isNew ? 'new-dropdown' : ''}`}>
       <div className="select-position">
-        <select onChange={(e) => onSelect(e.target.value, index)}>
+        <select onChange={(e) => onSelect(e.target.value, index)} value={value}>
           <option value="">Select Year Level</option>
           {yearLevels.map((year) => (
             <option key={year} value={year}>
@@ -129,35 +129,44 @@ function Tuition(props) {
   const [sortedChildren, setSortedChildren] = useState([]);
   // Add a new state for campus
   const [campus, setCampus] = useState(props.campus || 0);
-  
+  const [newDropdowns, setNewDropdowns] = useState([]);
+
   // Add this useEffect to recalculate total when campus changes
   useEffect(() => {
     calculateTotal(children, hasConcessionCard, hasBusFee);
   }, [campus]);
 
   const addChild = () => {
-    setChildren([...children, ""]);
+  setChildren([...children, ""]);
+  setShowDropdowns((prevState) => {
+    const newState = [...prevState, false];
+    return newState;
+  });
+  setNewDropdowns((prevState) => [...prevState, true]);
+  // Use setTimeout to delay the animation
+  setTimeout(() => {
     setShowDropdowns((prevState) => {
-      const newState = [...prevState, false];
+      const newState = [...prevState];
+      newState[children.length] = true;
       return newState;
     });
-    // Use setTimeout to delay the animation
-    setTimeout(() => {
-      setShowDropdowns((prevState) => {
-        const newState = [...prevState];
-        newState[children.length] = true;
-        return newState;
-      });
-    }, 50);
-  };
+  }, 50);
+};
 
-  const updateChildYear = (year, index) => {
-    const newChildren = [...children];
-    newChildren[index] = year;
-    setChildren(newChildren);
-    const sorted = calculateTotal(newChildren, hasConcessionCard, hasBusFee);
-    setSortedChildren(sorted);
-  };
+const updateChildYear = (year, index) => {
+  const newChildren = [...children];
+  newChildren[index] = year;
+  setChildren(newChildren);
+  const sorted = calculateTotal(newChildren, hasConcessionCard, hasBusFee);
+  setSortedChildren(sorted);
+  
+  // Mark the dropdown as no longer new
+  setNewDropdowns((prevState) => {
+    const newState = [...prevState];
+    newState[index] = false;
+    return newState;
+  });
+};
 
   const calculateTotal = (childrenYears, concession, bus) => {
   let newTotal = 0;
@@ -166,7 +175,7 @@ function Tuition(props) {
     .sort((a, b) => yearLevels.indexOf(b) - yearLevels.indexOf(a));
 
   sortedChildren.forEach((year, index) => {
-    if (index < 3) {
+    if (index < 3 && year) { // Add check for year
       const costs = concession
         ? (campus === 0 ? concessionFee : concessionFeeClare)[year]
         : (campus === 0 ? standardCosts : standardCostsClare)[year];
@@ -196,10 +205,16 @@ function Tuition(props) {
     calculateTotal(children, hasConcessionCard, e.target.checked);
   };
   const resetCalculator = () => {
-    setChildren([]);
+    setChildren([""]);
     setHasConcessionCard(false);
     setHasBusFee(false);
     setTotal(0);
+    setSortedChildren([]); // Clear sorted children
+    setShowDropdowns([true, false, false]); // Reset dropdown visibility
+    setNewDropdowns([false]); // Reset new dropdown state
+  
+  // Recalculate total to clear the table
+  calculateTotal([""], false, false);
   };
   const getOrdinalSuffix = (i) => {
     const j = i % 10,
@@ -256,25 +271,29 @@ function Tuition(props) {
               </div>
             </div>
           </div>
-          <div className="col-12 col-md-6">
+        </div>
+        <div className="row align-items-center justify-content-center h-100">
+          <div className="col-12 col-md-5">
             <div className="card shadow-lg p-4">
               <div className="card-body">
                 <h3 className="title text-center">Horizon Fee Calculator</h3>
                 <div className="row align-items-center justify-content-center mt-20">
                   <div className="col-8">
-                    {children.map((child, index) => (
-                      <div
-                        key={index}
-                        className={`dropdown-container ${
-                          showDropdowns[index] ? "show" : ""
-                        }`}
-                      >
-                        <YearLevelSelector
-                          onSelect={(year) => updateChildYear(year, index)}
-                          index={index}
-                        />
-                      </div>
-                    ))}
+                  {children.map((child, index) => (
+                    <div
+                      key={index}
+                      className={`dropdown-container ${
+                        showDropdowns[index] ? "show" : ""
+                      }`}
+                    >
+                      <YearLevelSelector
+                        onSelect={(year) => updateChildYear(year, index)}
+                        index={index}
+                        isNew={newDropdowns[index]}
+                        value={child}
+                      />
+                    </div>
+                  ))}
                   </div>
                   <div className="col-4">
                     <button
@@ -285,8 +304,8 @@ function Tuition(props) {
                     </button>
                   </div>
                 </div>
-                <div className="row align-items-center justify-content-center">
-                  <div className="col-6">
+                <div className="row align-items-center justify-content-around">
+                  <div className="col-10 col-md-7">
                     <div className="checkbox-style">
                       <input
                         type="checkbox"
@@ -297,7 +316,7 @@ function Tuition(props) {
                       <label className="me-2">&nbsp;Concession Card</label>
                     </div>
                   </div>
-                  <div className="col-6">
+                  <div className="col-10 col-md-5 mt-2">
                     <div className="checkbox-style">
                       <input
                         type="checkbox"
@@ -322,10 +341,11 @@ function Tuition(props) {
               </div>
             </div>
           </div>
-          <div className="col-12 col-md-6">
+          <div className="col-12 col-md-7">
             <div className="card shadow-lg p-4">
               <div className="card-body total">
-                <h3 className="title text-center"><span className="text-success" style={{fontWeight: 700}}>{campus===0?"Balaklava":"Clare"}</span> Fee Outcome</h3>
+                <h3 className="title text-center mb-3"><span className="text-success" style={{fontWeight: 700}}>{campus===0?"Balaklava":"Clare"}</span> Fee Outcome</h3>
+                <h5 className="text-center m-0 p-0 mb-3">The calculator will automatically sort your children from <span>{`Oldest -> Youngest`}</span></h5>
                 <div className="row align-items-center justify-content-center">
                   <div className="col-12">
                     <div
@@ -364,92 +384,97 @@ function Tuition(props) {
                       <tbody>
                         <tr>
                           <th scope="row">Year Level</th>
-                          {sortedChildren.map((child, index) => (
-                            <td key={index}>
-                              {child ? child.toUpperCase() : "-"}
-                            </td>
-                          ))}
+                          {sortedChildren.length > 0 ? (
+                            sortedChildren.map((child, index) => (
+                              <td key={index}>
+                                {child ? child.toUpperCase() : "-"}
+                              </td>
+                            ))):(<td>-</td>)}
                         </tr>
                         <tr>
                           <th scope="row">School Fees</th>
-                          {sortedChildren.map((child, index) => (
-                            <td key={index}>
-                              <animated.span>
-                                {animatedProps.total.to(() =>
-                                  formatDollars(
-                                    child && index < 3
-                                      ? hasConcessionCard
-                                        ? (campus === 0 ? concessionFee : concessionFeeClare)[child][
-                                            Math.min(index, 2)
-                                          ]
-                                        : (campus === 0 ? standardCosts : standardCostsClare)[child][
-                                            Math.min(index, 2)
-                                          ]
-                                      : 0
-                                  )
-                                )}
-                              </animated.span>
-                            </td>
-                          ))}
+                          {sortedChildren.length > 0 ? (
+                            sortedChildren.map((child, index) => (
+                              <td key={index}>
+                                <animated.span>
+                                  {animatedProps.total.to(() =>
+                                    formatDollars(
+                                      child && index < 3
+                                        ? hasConcessionCard
+                                          ? (campus === 0 ? concessionFee : concessionFeeClare)[child][
+                                              Math.min(index, 2)
+                                            ]
+                                          : (campus === 0 ? standardCosts : standardCostsClare)[child][
+                                              Math.min(index, 2)
+                                            ]
+                                        : 0
+                                    )
+                                  )}
+                                </animated.span>
+                              </td>
+                            ))):(<td>-</td>)}
                         </tr>
                         <tr>
                           <th scope="row">CLEAR Levy</th>
-                          {sortedChildren.map((child, index) => (
-                            <td key={index}>
-                              <animated.span>
-                                {animatedProps.total.to(() =>
-                                  formatDollars(child ? getClearLevy(child) : 0)
-                                )}
-                              </animated.span>
-                            </td>
-                          ))}
+                          {sortedChildren.length > 0 ? (
+                            sortedChildren.map((child, index) => (
+                              <td key={index}>
+                                <animated.span>
+                                  {animatedProps.total.to(() =>
+                                    formatDollars(child && index < 3 ? getClearLevy(child) : 0)
+                                  )}
+                                </animated.span>
+                              </td>
+                            ))):(<td>-</td>)}
                         </tr>
                         <tr>
                           <th scope="row">Bus Fees</th>
-                          {sortedChildren.map((_, index) => (
-                            <td key={index}>
-                              <animated.span>
-                                {animatedProps.total.to(() =>
-                                  formatDollars(
-                                    hasBusFee
-                                      ? index === 0
-                                        ? busFee.child1
-                                        : index === 1
-                                        ? busFee.child2
-                                        : index === 2
-                                        ? busFee.child3
+                          {sortedChildren.length > 0 ? (
+                            sortedChildren.map((_, index) => (
+                              <td key={index}>
+                                <animated.span>
+                                  {animatedProps.total.to(() =>
+                                    formatDollars(
+                                      hasBusFee
+                                        ? index === 0
+                                          ? busFee.child1
+                                          : index === 1
+                                          ? busFee.child2
+                                          : index === 2
+                                          ? busFee.child3
+                                          : 0
                                         : 0
-                                      : 0
-                                  )
-                                )}
-                              </animated.span>
-                            </td>
-                          ))}
+                                    )
+                                  )}
+                                </animated.span>
+                              </td>
+                            ))):(<td>-</td>)}
                         </tr>
                         <tr>
                           <th scope="row">Discount</th>
                           <td>-</td>
-                          {sortedChildren.slice(1).map((child, index) => (
-                          <td key={index}>
-                            <animated.span>
-                              {animatedProps.total.to(() =>
-                                formatDollars(
-                                  child
-                                    ? hasConcessionCard
-                                      ? (campus === 0 ? concessionFee : concessionFeeClare)[child][0] -
-                                        (campus === 0 ? concessionFee : concessionFeeClare)[child][
-                                          Math.min(index + 1, 2)
-                                        ]
-                                      : (campus === 0 ? standardCosts : standardCostsClare)[child][0] -
-                                        (campus === 0 ? standardCosts : standardCostsClare)[child][
-                                          Math.min(index + 1, 2)
-                                        ]
-                                    : 0
-                                )
-                              )}
-                            </animated.span>
-                          </td>
-                        ))}
+                          {sortedChildren.length > 0 ? (
+                            sortedChildren.slice(1).map((child, index) => (
+                            <td key={index}>
+                              <animated.span>
+                                {animatedProps.total.to(() =>
+                                  formatDollars(
+                                    child
+                                      ? hasConcessionCard
+                                        ? (campus === 0 ? concessionFee : concessionFeeClare)[child][0] -
+                                          (campus === 0 ? concessionFee : concessionFeeClare)[child][
+                                            Math.min(index + 1, 2)
+                                          ]
+                                        : (campus === 0 ? standardCosts : standardCostsClare)[child][0] -
+                                          (campus === 0 ? standardCosts : standardCostsClare)[child][
+                                            Math.min(index + 1, 2)
+                                          ]
+                                      : 0
+                                  )
+                                )}
+                              </animated.span>
+                            </td>
+                          ))):(<td>-</td>)}
                         </tr>
                       </tbody>
                       <tfoot>

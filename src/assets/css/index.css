@@ -788,14 +788,14 @@ p {
 
 .select-style-2 .select-position::before {
   margin-top: 0px;
-  border-bottom: 1px solid var(--default-color);
-  border-right: 1px solid var(--default-color);
+  border-bottom: 1px solid var(--success-bg);
+  border-right: 1px solid var(--success-bg);
 }
 
 .select-style-2 .select-position::after {
   margin-top: -8px;
-  border-top: 1px solid var(--default-color);
-  border-left: 1px solid var(--default-color);
+  border-top: 1px solid var(--success-bg);
+  border-left: 1px solid var(--success-bg);
 }
 
 .select-style-2 .select-position select {
@@ -833,6 +833,17 @@ p {
   padding-top: 8px;
   padding-bottom: 8px;
   font-size: 14px;
+}
+
+/* Dropdown styles */
+.select-style-2 select {
+  border: 2px solid var(--success-bg);
+}
+
+/* New dropdown style */
+.select-style-2.new-dropdown select {
+  border: 2px solid var(--primary-bg);
+  color: var(--success-bg);
 }
 
 .select-style-3 {
