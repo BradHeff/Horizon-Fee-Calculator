@@ -7,13 +7,14 @@ import {
   busFee,
   concessionFee,
   concessionFeeClare,
+  staffDiscountPercentage,
   standardCosts,
   standardCostsClare,
   yearLevels,
 } from "./Constants";
 import FeeOutcomeTable from "./FeeOutcomeTable";
+import StaffDiscount from "./StaffDiscount";
 import YearLevelSelector from "./YearLevelSelector";
-// Add this constant near the top of the file, with other constants
 
 const Tuition = (props) => {
   const [children, setChildren] = useState([""]);
@@ -25,7 +26,7 @@ const Tuition = (props) => {
   const [sortedChildren, setSortedChildren] = useState([]);
 
   const [newDropdowns, setNewDropdowns] = useState([]);
-
+  const [isStaffDiscount, setIsStaffDiscount] = useState(false);
   // Add this useEffect to recalculate total when campus changes
   // Add a new state for campus
   const [campus, setCampus] = useState(props.campus);
@@ -73,7 +74,7 @@ const Tuition = (props) => {
   };
 
   const calculateTotal = useCallback(
-    (childrenYears, concession, bus) => {
+    (childrenYears, concession, bus, staffDiscount) => {
       let newTotal = 0;
       const sortedChildren = [...childrenYears]
         .filter(Boolean)
@@ -82,9 +83,14 @@ const Tuition = (props) => {
       sortedChildren.forEach((year, index) => {
         if (index < 3 && year) {
           // Add check for year
-          const costs = concession
+          let costs = concession
             ? (campus === 0 ? concessionFee : concessionFeeClare)[year]
             : (campus === 0 ? standardCosts : standardCostsClare)[year];
+          // Apply staff discount if applicable
+          if (staffDiscount && !concession) {
+            costs = costs.map((cost) => cost * staffDiscountPercentage);
+          }
+
           newTotal += costs[Math.min(index, 2)] || 0;
 
           newTotal += getClearLevy(year);
@@ -103,8 +109,12 @@ const Tuition = (props) => {
   );
 
   const handleConcessionChange = (e) => {
-    setHasConcessionCard(e.target.checked);
-    calculateTotal(children, e.target.checked, hasBusFee);
+    if (!isStaffDiscount) {
+      setHasConcessionCard(e.target.checked);
+      calculateTotal(children, e.target.checked, hasBusFee);
+    } else {
+      setHasConcessionCard(false);
+    }
   };
 
   const handleBusFeeChange = (e) => {
@@ -115,13 +125,13 @@ const Tuition = (props) => {
     setChildren([""]);
     setHasConcessionCard(false);
     setHasBusFee(false);
+    setIsStaffDiscount(false);
     setTotal(0);
-    setSortedChildren([]); // Clear sorted children
-    setShowDropdowns([true, false, false]); // Reset dropdown visibility
-    setNewDropdowns([false]); // Reset new dropdown state
+    setSortedChildren([]);
+    setShowDropdowns([true, false, false]);
+    setNewDropdowns([false]);
 
-    // Recalculate total to clear the table
-    calculateTotal([""], false, false);
+    calculateTotal([""], false, false, false);
   };
   const getOrdinalSuffix = (i) => {
     const j = i % 10,
@@ -157,13 +167,28 @@ const Tuition = (props) => {
     props.onSetCampus(newCampus);
   };
 
+  const handleStaffDiscountChange = (e) => {
+    setIsStaffDiscount(e.target.checked);
+    if (hasConcessionCard) {
+      setHasConcessionCard(false);
+    }
+    calculateTotal(children, hasConcessionCard, hasBusFee, e.target.checked);
+  };
+
   useEffect(() => {
     setCampus(props.campus || 0);
   }, [props.campus]);
 
   useEffect(() => {
-    calculateTotal(children, hasConcessionCard, hasBusFee);
-  }, [calculateTotal, campus, children, hasBusFee, hasConcessionCard]);
+    calculateTotal(children, hasConcessionCard, hasBusFee, isStaffDiscount);
+  }, [
+    calculateTotal,
+    campus,
+    children,
+    hasBusFee,
+    hasConcessionCard,
+    isStaffDiscount,
+  ]);
 
   return (
     <div className="section section-lg">
@@ -201,7 +226,7 @@ const Tuition = (props) => {
             </div>
           </div>
         </div>
-        <div className="row align-items-center justify-content-center h-100">
+        <div className="row equal-height-row justify-content-center">
           <CalculatorControls
             YearLevelSelector={YearLevelSelector}
             children={children}
@@ -232,6 +257,13 @@ const Tuition = (props) => {
             totalRef={totalRef}
             campus={campus}
             animated={animated}
+            isStaffDiscount={isStaffDiscount}
+          />
+        </div>
+        <div className="row align-items-center justify-content-center h-100">
+          <StaffDiscount
+            handleStaffDiscountChange={handleStaffDiscountChange}
+            isStaffDiscount={isStaffDiscount}
           />
         </div>
         <FooterStyle />

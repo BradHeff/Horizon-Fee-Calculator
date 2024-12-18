@@ -14,10 +14,26 @@ const FeeOutcomeTable = ({
   totalRef,
   campus,
   animated,
+  isStaffDiscount,
 }) => {
+  const calculateFee = (child, index) => {
+    if (!child) return 0;
+    const fees = hasConcessionCard
+      ? campus === 0
+        ? concessionFee
+        : concessionFeeClare
+      : campus === 0
+      ? standardCosts
+      : standardCostsClare;
+    let fee = fees[child][Math.min(index, 2)];
+    if (isStaffDiscount && !hasConcessionCard) {
+      fee *= 0.9; // Apply 10% staff discount
+    }
+    return fee;
+  };
   return (
     <div className="col-12 col-md-7">
-      <div className="card shadow-lg p-4">
+      <div className="card shadow-lg p-4 h-100">
         <div className="card-body total">
           <h3 className="title text-center mb-3">
             <span className="text-success" style={{ fontWeight: 700 }}>
@@ -157,23 +173,8 @@ const FeeOutcomeTable = ({
                             {animatedProps.total.to(() =>
                               formatDollars(
                                 child
-                                  ? hasConcessionCard
-                                    ? (campus === 0
-                                        ? concessionFee
-                                        : concessionFeeClare)[child][0] -
-                                      (campus === 0
-                                        ? concessionFee
-                                        : concessionFeeClare)[child][
-                                        Math.min(index + 1, 2)
-                                      ]
-                                    : (campus === 0
-                                        ? standardCosts
-                                        : standardCostsClare)[child][0] -
-                                      (campus === 0
-                                        ? standardCosts
-                                        : standardCostsClare)[child][
-                                        Math.min(index + 1, 2)
-                                      ]
+                                  ? calculateFee(child, 0) -
+                                      calculateFee(child, index + 1)
                                   : 0
                               )
                             )}
@@ -188,15 +189,29 @@ const FeeOutcomeTable = ({
                 <tfoot>
                   <tr className="table-secondary">
                     <th scope="row">Total</th>
-                    <td>
-                      <animated.span>
-                        {animatedProps.total.to((val) =>
-                          formatDollars(val.toFixed(2))
-                        )}
-                      </animated.span>
-                    </td>
-                    <td></td>
-                    <td></td>
+                    {sortedChildren.map((child, index) => (
+                      <td key={index}>
+                        <animated.span>
+                          {animatedProps.total.to(() =>
+                            formatDollars(
+                              (
+                                calculateFee(child, index) +
+                                (hasBusFee
+                                  ? index === 0
+                                    ? busFee.child1
+                                    : index === 1
+                                    ? busFee.child2
+                                    : index === 2
+                                    ? busFee.child3
+                                    : 0
+                                  : 0) +
+                                getClearLevy(child)
+                              ).toFixed(2)
+                            )
+                          )}
+                        </animated.span>
+                      </td>
+                    ))}
                   </tr>
                 </tfoot>
               </table>

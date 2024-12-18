@@ -1,3 +1,5 @@
+export const staffDiscountPercentage = 0.9; // 10% staff discount
+
 export const yearLevels = [
   "foundation",
   "year1",

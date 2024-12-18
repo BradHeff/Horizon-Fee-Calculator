@@ -13,7 +13,7 @@ const CalculatorControls = ({
 }) => {
   return (
     <div className="col-12 col-md-5">
-      <div className="card shadow-lg p-4">
+      <div className="card shadow-lg p-4 h-100">
         <div className="card-body">
           <h3 className="title text-center">Horizon Fee Calculator</h3>
           <div className="row align-items-center justify-content-center mt-20">
