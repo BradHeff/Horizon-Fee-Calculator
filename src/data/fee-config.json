@@ -1,0 +1,173 @@
+{
+	"version": "2026.1",
+	"lastUpdated": "2024-01-15",
+	"description": "Horizon Christian School Fee Structure - Board Approved 2026 Rates",
+
+	"settings": {
+		"staffDiscountPercentage": 25,
+		"currency": "AUD",
+		"paymentFrequency": "per term",
+		"academicYear": "2026"
+	},
+
+	"yearLevels": [
+		{ "key": "foundation", "display": "Foundation", "order": 0 },
+		{ "key": "year1", "display": "Year 1", "order": 1 },
+		{ "key": "year2", "display": "Year 2", "order": 2 },
+		{ "key": "year3", "display": "Year 3", "order": 3 },
+		{ "key": "year4", "display": "Year 4", "order": 4 },
+		{ "key": "year5", "display": "Year 5", "order": 5 },
+		{ "key": "year6", "display": "Year 6", "order": 6 },
+		{ "key": "year7", "display": "Year 7", "order": 7 },
+		{ "key": "year8", "display": "Year 8", "order": 8 },
+		{ "key": "year9", "display": "Year 9", "order": 9 },
+		{ "key": "year10", "display": "Year 10", "order": 10 },
+		{ "key": "year11", "display": "Year 11", "order": 11 },
+		{ "key": "year12", "display": "Year 12", "order": 12 }
+	],
+
+	"campuses": [
+		{
+			"id": 0,
+			"name": "Balaklava",
+			"code": "BAL",
+			"fullRate": true
+		},
+		{
+			"id": 1,
+			"name": "Clare",
+			"code": "CLA",
+			"fullRate": false,
+			"discountPercentage": 50
+		}
+	],
+
+	"childPriorityDiscounts": [
+		{
+			"childNumber": 1,
+			"discountPercentage": 0,
+			"description": "First child - full fee"
+		},
+		{
+			"childNumber": 2,
+			"discountPercentage": 25,
+			"description": "Second child - 25% discount"
+		},
+		{
+			"childNumber": 3,
+			"discountPercentage": 50,
+			"description": "Third child - 50% discount"
+		},
+		{
+			"childNumber": 4,
+			"discountPercentage": 100,
+			"description": "Fourth+ child - free"
+		}
+	],
+
+	"feeStructure": {
+		"tuition": {
+			"balaklava": {
+				"standard": {
+					"foundation": [2627, 1967, 1313, 0],
+					"year1": [2627, 1967, 1313, 0],
+					"year2": [2627, 1967, 1313, 0],
+					"year3": [2627, 1967, 1313, 0],
+					"year4": [2884, 2163, 1442, 0],
+					"year5": [2884, 2163, 1442, 0],
+					"year6": [2884, 2163, 1442, 0],
+					"year7": [3172, 2379, 1586, 0],
+					"year8": [3172, 2379, 1586, 0],
+					"year9": [3172, 2379, 1586, 0],
+					"year10": [3337, 2503, 1669, 0],
+					"year11": [3337, 2503, 1669, 0],
+					"year12": [3337, 2503, 1669, 0]
+				},
+				"concession": {
+					"foundation": [1313, 984, 657, 0],
+					"year1": [1313, 984, 657, 0],
+					"year2": [1313, 984, 657, 0],
+					"year3": [1313, 984, 657, 0],
+					"year4": [1442, 1082, 721, 0],
+					"year5": [1442, 1082, 721, 0],
+					"year6": [1442, 1082, 721, 0],
+					"year7": [1586, 1190, 793, 0],
+					"year8": [1586, 1190, 793, 0],
+					"year9": [1586, 1190, 793, 0],
+					"year10": [1669, 1251, 834, 0],
+					"year11": [1669, 1251, 834, 0],
+					"year12": [1669, 1251, 834, 0]
+				}
+			},
+			"clare": {
+				"standard": {
+					"foundation": [1700, 1273, 849, 0],
+					"year1": [1700, 1273, 849, 0],
+					"year2": [1700, 1273, 849, 0],
+					"year3": [1700, 1273, 849, 0],
+					"year4": [1867, 1400, 700, 0],
+					"year5": [1867, 1400, 700, 0],
+					"year6": [1867, 1400, 700, 0],
+					"year7": [2053, 1540, 770, 0],
+					"year8": [2053, 1540, 770, 0],
+					"year9": [2053, 1540, 770, 0],
+					"year10": [2160, 1620, 810, 0],
+					"year11": [2160, 1620, 810, 0],
+					"year12": [2160, 1620, 810, 0]
+				},
+				"concession": {
+					"foundation": [850, 637, 425, 0],
+					"year1": [850, 637, 425, 0],
+					"year2": [850, 637, 425, 0],
+					"year3": [850, 637, 425, 0],
+					"year4": [933, 700, 350, 0],
+					"year5": [933, 700, 350, 0],
+					"year6": [933, 700, 350, 0],
+					"year7": [1027, 770, 385, 0],
+					"year8": [1027, 770, 385, 0],
+					"year9": [1027, 770, 385, 0],
+					"year10": [1080, 810, 405, 0],
+					"year11": [1080, 810, 405, 0],
+					"year12": [1080, 810, 405, 0]
+				}
+			}
+		},
+		"transport": {
+			"busFees": {
+				"child1": 390,
+				"child2": 260,
+				"child3": 130,
+				"child4": 0
+			}
+		},
+		"resources": {
+			"resourceFees": {
+				"foundation": 103,
+				"year1": 103,
+				"year2": 103,
+				"year3": 103,
+				"year4": 258,
+				"year5": 258,
+				"year6": 258,
+				"year7": 515,
+				"year8": 515,
+				"year9": 515,
+				"year10": 515,
+				"year11": 515,
+				"year12": 515
+			}
+		}
+	},
+
+	"metadata": {
+		"approvedBy": "Board of Directors",
+		"approvalDate": "2024-01-10",
+		"effectiveDate": "2026-01-01",
+		"notes": [
+			"Fees are charged per term",
+			"Staff discount applies to tuition only, not transport",
+			"Concession card holders eligible for reduced rates",
+			"Fourth child and subsequent children attend free"
+		]
+	}
+}

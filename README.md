@@ -66,6 +66,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#dynamic-fee-system">Dynamic Fee System</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -80,7 +81,33 @@
 
 [![GUI Screen Shot][product-screenshot]](https://github.com/BradHeff/Horizon-Fee-Calculator/blob/main/images/screenshot1.png)
 
-This is a static page for calculating school fee's for Horizon Christian School, The project is still under development and much work needs to be put into the pricing and calculations per selected element.<br/>
+This is a modern, responsive web application for calculating school fees for Horizon Christian School. The application features a user-friendly interface with Material-UI components and a dynamic fee management system that allows administrators to update fee structures without code changes.
+
+## ✨ Recent Major Updates
+
+### Dynamic Fee Management System
+The calculator now includes a comprehensive dynamic fee management system:
+
+- **Configuration-Driven Fees**: All fee structures are stored in JSON configuration files
+- **Admin Interface**: Web-based tool for non-technical staff to update fees
+- **Automatic Calculations**: Intelligent fee calculations with family and staff discounts
+- **Version Control**: Track fee changes and maintain audit trails
+- **Spreadsheet Integration**: Import/export capabilities for easy fee updates
+
+### Modern UI Design
+Complete redesign using Material-UI with:
+- **Horizon Branding**: Custom theme using school colors (#2E5D4A forest green, #F4B942 gold)
+- **Parent-Friendly UX**: Step-by-step process with clear explanations
+- **Mobile Responsive**: Optimized for all devices and screen sizes
+- **Accessibility**: WCAG compliant design for all users
+
+### Key Features
+- Multi-campus support (Balaklava and Clare)
+- Automatic sibling discounts (2nd child 25% off, 3rd child 50% off, 4th+ free)
+- Staff discount support (25% configurable discount)
+- Concession card holder discounts
+- Transport fee calculations
+- Real-time fee previews with detailed breakdowns
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -132,17 +159,111 @@ Software needed for this application to work
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- DYNAMIC FEE SYSTEM -->
+
+## Dynamic Fee System
+
+The application now includes a sophisticated fee management system that eliminates hardcoded fee structures and enables non-technical staff to update fees easily.
+
+### For School Administrators
+
+**Updating Fees Without Code Changes:**
+1. Navigate to the Fee Administration interface (when implemented)
+2. Select the appropriate campus (Balaklava or Clare)
+3. Update fee amounts using the visual editor
+4. Preview changes and save the new configuration
+5. Download backup of the updated fee structure
+
+**Alternative Method - Direct File Update:**
+1. Edit `src/data/fee-config.json` with new fee amounts
+2. Update the version number and last updated date
+3. Validate the JSON format is correct
+4. Deploy the updated configuration
+
+### For Developers
+
+**Using the Enhanced Fee System:**
+```javascript
+import FeeConfigService from './services/FeeConfigService';
+
+// Calculate fees for a family
+const familyFees = FeeConfigService.calculateFamilyFees(
+  [{ yearLevel: 'year7' }, { yearLevel: 'year9' }],
+  0, // Campus: 0=Balaklava, 1=Clare
+  false, // Has concession card
+  true, // Is staff member  
+  true // Has bus fees
+);
+
+console.log(`Total fees: $${familyFees.grandTotal}`);
+```
+
+**CSV to JSON Conversion:**
+```bash
+# Generate template CSV for fee updates
+node scripts/csv-to-json-converter.js --template fees-template.csv
+
+# Convert updated CSV to JSON configuration
+node scripts/csv-to-json-converter.js fees-2026.csv src/data/fee-config.json
+```
+
+### Key Benefits
+
+- **No Code Changes Required**: Update fees through configuration files
+- **Version Control**: Track all fee changes with automatic versioning
+- **Error Prevention**: Built-in validation prevents configuration mistakes  
+- **Audit Trail**: Complete history of who changed what and when
+- **Backup/Restore**: Easy export and import of fee configurations
+- **Spreadsheet Integration**: Convert Excel/CSV files to system format
+
+### Technical Features
+
+- Automatic sibling discounts (25%, 50%, 100% for 2nd, 3rd, 4th+ children)
+- Configurable staff discount percentage
+- Campus-specific fee structures
+- Concession card holder support
+- Transport fee management
+- Real-time fee calculations
+- Configuration validation and error checking
+
+For detailed technical documentation, see [DYNAMIC_FEE_SYSTEM.md](DYNAMIC_FEE_SYSTEM.md)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- ROADMAP -->
 
 ## Roadmap
 
-- [ ] Create Stylish Webpage
-- [ ] Create Functions and Features
-- [ ] Improve Fee Calculations
-  - [ ] Add bus fee's
-  - [ ] add discount % for Consession Card
-  - [ ] return correct pricing
-- [ ] Return table view of fee's per term
+### ✅ Completed Features
+- [x] Create Stylish Webpage (Material-UI redesign with Horizon branding)
+- [x] Create Functions and Features (Enhanced calculator with step-by-step process)
+- [x] Improve Fee Calculations
+  - [x] Add bus fees with family discounts
+  - [x] Add discount % for Concession Card holders
+  - [x] Return correct pricing with all discounts applied
+  - [x] Staff discount system (25% configurable)
+  - [x] Automatic sibling discounts
+- [x] Return table view of fees per term (Enhanced breakdown table)
+- [x] Dynamic Fee Management System
+  - [x] Configuration-driven fee structures
+  - [x] CSV to JSON conversion tools
+  - [x] Fee administration interface
+  - [x] Version control and audit trails
+
+### 🚧 In Progress
+- [ ] Fee Administration Interface (UI complete, backend integration pending)
+- [ ] Historical fee tracking and reporting
+- [ ] Multi-year fee planning tools
+
+### 📋 Planned Features
+- [ ] Integration with school management systems
+- [ ] Automated fee updates from external sources
+- [ ] Payment plan calculator
+- [ ] Fee comparison tools between academic years
+- [ ] Email fee estimates to families
+- [ ] Print-friendly fee statements
+- [ ] Mobile app version
+- [ ] Multi-language support
 
 See the [open issues](https://github.com/bradheff/Horizon-Fee-Calculator/issues) for a full list of proposed features (and known issues).
 
