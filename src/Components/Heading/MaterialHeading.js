@@ -26,7 +26,7 @@ import Logo from "../../assets/images/icon.png";
 const MaterialHeading = (props) => {
 	const [anchorElNav, setAnchorElNav] = useState(null);
 	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const isMobile = useMediaQuery("(max-width:1360px)");
 	const navigate = useNavigate();
 
 	const handleOpenNavMenu = (event) => {

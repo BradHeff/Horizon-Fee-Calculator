@@ -41,7 +41,7 @@ import MaterialStaffDiscount from "./MaterialStaffDiscount";
 
 const MaterialTuition = (props) => {
 	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const isMobile = useMediaQuery("(max-width:1360px)");
 
 	const [children, setChildren] = useState([""]);
 	const [hasConcessionCard, setHasConcessionCard] = useState(false);
@@ -102,26 +102,32 @@ const MaterialTuition = (props) => {
 				.sort((a, b) => yearLevels.indexOf(b) - yearLevels.indexOf(a));
 
 			sortedChildren.forEach((year, index) => {
-				if (index < 3 && year) {
-					let costs = concession
-						? (campus === 0 ? concessionFee : concessionFeeClare)[
-								year
-						  ]
-						: (campus === 0 ? standardCosts : standardCostsClare)[
-								year
-						  ];
+				if (year) {
+					// Only first 3 children get tuition fees
+					if (index < 3) {
+						let costs = concession
+							? (campus === 0
+									? concessionFee
+									: concessionFeeClare)[year]
+							: (campus === 0
+									? standardCosts
+									: standardCostsClare)[year];
 
-					if (staffDiscount && !concession) {
-						costs = costs.map(
-							(cost) => cost * staffDiscountPercentage
-						);
+						if (staffDiscount && !concession) {
+							costs = costs.map(
+								(cost) => cost * staffDiscountPercentage
+							);
+						}
+
+						newTotal += costs[Math.min(index, 2)] || 0;
 					}
 
-					newTotal += costs[Math.min(index, 2)] || 0;
+					// All children get resource fees (levy)
 					newTotal += getClearLevy(year);
 				}
 
-				if (bus) {
+				// Only first 3 children get bus fees
+				if (bus && index < 3) {
 					if (index === 0) newTotal += busFee.child1;
 					else if (index === 1) newTotal += busFee.child2;
 					else if (index === 2) newTotal += busFee.child3;
@@ -209,7 +215,7 @@ const MaterialTuition = (props) => {
 	]);
 
 	return (
-		<Container maxWidth="lg" sx={{ pt: { xs: 12, md: 14 }, pb: 4 }}>
+		<Container maxWidth="xl" sx={{ pt: { xs: 12, md: 14 }, pb: 4 }}>
 			{/* Header Section */}
 			<Paper
 				elevation={2}
@@ -257,7 +263,7 @@ const MaterialTuition = (props) => {
 			{/* Main Calculator Grid */}
 			<Grid container spacing={4}>
 				{/* Left Column - Calculator Controls */}
-				<Grid item xs={12} lg={6}>
+				<Grid item xs={12} {...(isMobile ? {} : { xl: 4 })}>
 					<Card sx={{ height: "100%" }}>
 						<CardContent sx={{ p: 3 }}>
 							<Box display="flex" alignItems="center" mb={3}>
@@ -299,7 +305,7 @@ const MaterialTuition = (props) => {
 				</Grid>
 
 				{/* Right Column - Fee Breakdown */}
-				<Grid item xs={12} lg={6}>
+				<Grid item xs={12} {...(isMobile ? {} : { xl: 8 })}>
 					<Card sx={{ height: "100%" }}>
 						<CardContent sx={{ p: 3 }}>
 							<Box display="flex" alignItems="center" mb={3}>

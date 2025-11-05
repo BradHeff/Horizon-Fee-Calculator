@@ -17,6 +17,7 @@ import {
 	TableHead,
 	TableRow,
 	Typography,
+	useMediaQuery,
 } from "@mui/material";
 
 const MaterialFeeOutcomeTable = ({
@@ -36,6 +37,8 @@ const MaterialFeeOutcomeTable = ({
 	animated,
 	isStaffDiscount,
 }) => {
+	const isMobile = useMediaQuery("(max-width:1360px)");
+
 	const yearLevelLabels = {
 		foundation: "Foundation/Kindy",
 		year1: "Year 1",
@@ -80,18 +83,27 @@ const MaterialFeeOutcomeTable = ({
 		let subtotal = 0;
 
 		sortedChildren.forEach((year, index) => {
-			if (index < 3 && year) {
-				const costs = hasConcessionCard
-					? (campus === 0 ? concessionFee : concessionFeeClare)[year]
-					: (campus === 0 ? standardCosts : standardCostsClare)[year];
+			if (year) {
+				// Only first 3 children get tuition fees
+				if (index < 3) {
+					const costs = hasConcessionCard
+						? (campus === 0 ? concessionFee : concessionFeeClare)[
+								year
+						  ]
+						: (campus === 0 ? standardCosts : standardCostsClare)[
+								year
+						  ];
 
-				let fee = costs[Math.min(index, 2)] || 0;
+					let fee = costs[Math.min(index, 2)] || 0;
 
-				if (isStaffDiscount && !hasConcessionCard) {
-					fee = fee * 0.75; // 25% staff discount
+					if (isStaffDiscount && !hasConcessionCard) {
+						fee = fee * 0.75; // 25% staff discount
+					}
+
+					subtotal += fee;
 				}
 
-				subtotal += fee;
+				// All children get resource fees (levy)
 				subtotal += getClearLevy(year);
 			}
 		});
@@ -103,9 +115,12 @@ const MaterialFeeOutcomeTable = ({
 		let busTotal = 0;
 		if (hasBusFee) {
 			sortedChildren.forEach((_, index) => {
-				if (index === 0) busTotal += busFee.child1;
-				else if (index === 1) busTotal += busFee.child2;
-				else if (index === 2) busTotal += busFee.child3;
+				// Only first 3 children get bus fees
+				if (index < 3) {
+					if (index === 0) busTotal += busFee.child1;
+					else if (index === 1) busTotal += busFee.child2;
+					else if (index === 2) busTotal += busFee.child3;
+				}
 			});
 		}
 		return busTotal;
@@ -113,61 +128,86 @@ const MaterialFeeOutcomeTable = ({
 
 	const subtotal = calculateSubtotal();
 	const busTotal = calculateBusTotal();
-
 	return (
 		<Box>
 			{/* Fee Breakdown Table */}
-			<TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
-				<Table>
+			<TableContainer
+				component={Paper}
+				variant="outlined"
+				sx={{
+					mb: 3,
+					overflowX: "auto",
+					width: "100%",
+					"& .MuiTable-root": {
+						minWidth: isMobile ? (hasBusFee ? 700 : 500) : 800,
+					},
+				}}
+			>
+				<Table size={isMobile ? "small" : "medium"}>
 					<TableHead>
 						<TableRow>
-							<TableCell sx={{ fontWeight: 600 }}>
+							<TableCell sx={{ fontWeight: 600, minWidth: 100 }}>
 								Child
 							</TableCell>
-							<TableCell sx={{ fontWeight: 600 }}>
+							<TableCell sx={{ fontWeight: 600, minWidth: 120 }}>
 								Year Level
 							</TableCell>
-							<TableCell sx={{ fontWeight: 600 }} align="right">
+							<TableCell
+								sx={{ fontWeight: 600, minWidth: 100 }}
+								align="right"
+							>
 								Tuition Fee
 							</TableCell>
-							<TableCell sx={{ fontWeight: 600 }} align="right">
+							<TableCell
+								sx={{ fontWeight: 600, minWidth: 80 }}
+								align="right"
+							>
 								Levy
 							</TableCell>
 							{hasBusFee && (
 								<TableCell
-									sx={{ fontWeight: 600 }}
+									sx={{ fontWeight: 600, minWidth: 90 }}
 									align="right"
 								>
 									Bus Fee
 								</TableCell>
 							)}
-							<TableCell sx={{ fontWeight: 600 }} align="right">
+							<TableCell
+								sx={{ fontWeight: 600, minWidth: 100 }}
+								align="right"
+							>
 								Subtotal
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{sortedChildren.map((year, index) => {
-							if (index >= 3 || !year) return null;
+							if (!year) return null;
 
-							const costs = hasConcessionCard
-								? (campus === 0
-										? concessionFee
-										: concessionFeeClare)[year]
-								: (campus === 0
-										? standardCosts
-										: standardCostsClare)[year];
+							// Only first 3 children get tuition fees
+							let tuitionFee = 0;
+							if (index < 3) {
+								const costs = hasConcessionCard
+									? (campus === 0
+											? concessionFee
+											: concessionFeeClare)[year]
+									: (campus === 0
+											? standardCosts
+											: standardCostsClare)[year];
 
-							let tuitionFee = costs[Math.min(index, 2)] || 0;
+								tuitionFee = costs[Math.min(index, 2)] || 0;
 
-							if (isStaffDiscount && !hasConcessionCard) {
-								tuitionFee = tuitionFee * 0.75;
+								if (isStaffDiscount && !hasConcessionCard) {
+									tuitionFee = tuitionFee * 0.75;
+								}
 							}
 
+							// All children get resource fees (levy)
 							const levy = getClearLevy(year);
-							let childBusFee = 0;
 
-							if (hasBusFee) {
+							// Only first 3 children get bus fees
+							let childBusFee = 0;
+							if (hasBusFee && index < 3) {
 								if (index === 0) childBusFee = busFee.child1;
 								else if (index === 1)
 									childBusFee = busFee.child2;
@@ -180,18 +220,19 @@ const MaterialFeeOutcomeTable = ({
 
 							return (
 								<TableRow key={index}>
-									<TableCell>
+									<TableCell sx={{ py: 1 }}>
 										<Box display="flex" alignItems="center">
 											<SchoolIcon
 												sx={{
 													mr: 1,
 													color: "primary.main",
-													fontSize: 20,
+													fontSize: 18,
 												}}
 											/>
 											<Typography
 												variant="body2"
 												fontWeight={500}
+												sx={{ fontSize: "0.85rem" }}
 											>
 												{index + 1}
 												{getOrdinalSuffix(
@@ -201,19 +242,21 @@ const MaterialFeeOutcomeTable = ({
 											</Typography>
 										</Box>
 									</TableCell>
-									<TableCell>
+									<TableCell sx={{ py: 1 }}>
 										<Chip
 											label={yearLevelLabels[year]}
 											size="small"
 											color="primary"
 											variant="outlined"
+											sx={{ fontSize: "0.75rem" }}
 										/>
 									</TableCell>
-									<TableCell align="right">
+									<TableCell align="right" sx={{ py: 1 }}>
 										<Box>
 											<Typography
 												variant="body2"
 												fontWeight={500}
+												sx={{ fontSize: "0.85rem" }}
 											>
 												{formatDollars(tuitionFee)}
 											</Typography>
@@ -222,36 +265,47 @@ const MaterialFeeOutcomeTable = ({
 													<Typography
 														variant="caption"
 														color="success.main"
+														sx={{
+															fontSize: "0.7rem",
+														}}
 													>
-														Staff discount applied
+														Staff discount
 													</Typography>
 												)}
 											{hasConcessionCard && (
 												<Typography
 													variant="caption"
 													color="info.main"
+													sx={{ fontSize: "0.7rem" }}
 												>
-													Concession rate
+													Concession
 												</Typography>
 											)}
 										</Box>
 									</TableCell>
-									<TableCell align="right">
-										<Typography variant="body2">
+									<TableCell align="right" sx={{ py: 1 }}>
+										<Typography
+											variant="body2"
+											sx={{ fontSize: "0.85rem" }}
+										>
 											{formatDollars(levy)}
 										</Typography>
 									</TableCell>
 									{hasBusFee && (
-										<TableCell align="right">
-											<Typography variant="body2">
+										<TableCell align="right" sx={{ py: 1 }}>
+											<Typography
+												variant="body2"
+												sx={{ fontSize: "0.85rem" }}
+											>
 												{formatDollars(childBusFee)}
 											</Typography>
 										</TableCell>
 									)}
-									<TableCell align="right">
+									<TableCell align="right" sx={{ py: 1 }}>
 										<Typography
 											variant="body2"
 											fontWeight={600}
+											sx={{ fontSize: "0.9rem" }}
 										>
 											{formatDollars(childSubtotal)}
 										</Typography>

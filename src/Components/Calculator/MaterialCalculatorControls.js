@@ -150,16 +150,14 @@ const MaterialCalculatorControls = ({
 				))}
 
 				<Box display="flex" gap={2} mt={2}>
-					{children.length < 3 && (
-						<Button
-							variant="outlined"
-							startIcon={<AddIcon />}
-							onClick={addChild}
-							size="large"
-						>
-							Add Another Child
-						</Button>
-					)}
+					<Button
+						variant="outlined"
+						startIcon={<AddIcon />}
+						onClick={addChild}
+						size="large"
+					>
+						Add Another Child
+					</Button>
 
 					<Button
 						variant="outlined"

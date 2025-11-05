@@ -179,31 +179,44 @@ const EnhancedMaterialFeeOutcomeTable = ({
 		calculations = calculateLegacyFees();
 	}
 
+	// Helper function for resource fees
+	const getClearLevy = (yearLevel) => {
+		return FeeConfigService.getResourceFeeForYear(yearLevel);
+	};
+
 	function calculateLegacyFees() {
 		let subtotal = 0;
 		let busTotal = 0;
+		let resourceTotal = 0;
 		const breakdown = [];
 
 		yearLevels.forEach((year, index) => {
-			const costs = hasConcessionCard
-				? (campus === 0 ? concessionFee : concessionFeeClare)[year]
-				: (campus === 0 ? standardCosts : standardCostsClare)[year];
+			// Only first 3 children get tuition fees
+			let fee = 0;
+			if (index < 3) {
+				const costs = hasConcessionCard
+					? (campus === 0 ? concessionFee : concessionFeeClare)[year]
+					: (campus === 0 ? standardCosts : standardCostsClare)[year];
 
-			let fee = costs[Math.min(index, 2)] || 0;
+				fee = costs[Math.min(index, 2)] || 0;
 
-			if (hasStaffDiscount && fee > 0) {
-				fee = fee * 0.75; // 25% staff discount
+				if (hasStaffDiscount && fee > 0) {
+					fee = fee * 0.75; // 25% staff discount
+				}
 			}
 
 			subtotal += fee;
 
-			// Calculate bus fee
+			// All children get resource fees
+			const resourceFee = getClearLevy(year);
+			resourceTotal += resourceFee;
+
+			// Only first 3 children get bus fees
 			let childBusFee = 0;
-			if (hasBusFee) {
+			if (hasBusFee && index < 3) {
 				if (index === 0) childBusFee = busFee.child1;
 				else if (index === 1) childBusFee = busFee.child2;
 				else if (index === 2) childBusFee = busFee.child3;
-				else childBusFee = busFee.child4;
 
 				busTotal += childBusFee;
 			}
@@ -212,15 +225,17 @@ const EnhancedMaterialFeeOutcomeTable = ({
 				childNumber: index + 1,
 				yearLevel: year,
 				tuitionFee: fee,
+				resourceFee: resourceFee,
 				busFee: childBusFee,
-				total: fee + childBusFee,
+				total: fee + resourceFee + childBusFee,
 			});
 		});
 
 		return {
 			tuition: subtotal,
+			resources: resourceTotal,
 			transport: busTotal,
-			grandTotal: subtotal + busTotal,
+			grandTotal: subtotal + resourceTotal + busTotal,
 			breakdown,
 			appliedDiscounts: {
 				concessionCard: hasConcessionCard,
@@ -523,10 +538,12 @@ const EnhancedMaterialFeeOutcomeTable = ({
 													},
 												}}
 											>
-												{child.yearLevel.replace(
-													"year",
-													"Year "
-												)}
+												{child.yearLevel
+													.replace("year", "Year ")
+													.replace(
+														"foundation",
+														"Foundation/Kindy"
+													)}
 											</Box>
 											<Box
 												component="span"
