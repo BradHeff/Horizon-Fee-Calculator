@@ -10,8 +10,8 @@ The admin panel has been successfully integrated into the Horizon Fee Calculator
 - **Admin Dashboard**: `http://localhost:3000/admin/dashboard`
 
 ### **Login Credentials (Development):**
-- **Username**: `admin`
-- **Password**: `horizon2024`
+- **Username**: `support`
+- **Password**: `Horizon2025@`
 
 ## 🚀 **Navigation Methods**
 
@@ -60,8 +60,8 @@ The admin panel has been successfully integrated into the Horizon Fee Calculator
 
 ### **Development Environment:**
 The current implementation uses hardcoded credentials for development purposes. The credentials are:
-- Username: `admin`
-- Password: `horizon2024`
+- Username: `support`
+- Password: `Horizon2025@`
 
 ### **Production Deployment:**
 For production use, you should:

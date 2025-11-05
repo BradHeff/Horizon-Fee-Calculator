@@ -34,8 +34,8 @@ const AdminLogin = ({ onLogin }) => {
 
 	// Simple hardcoded credentials - in production, use proper authentication
 	const ADMIN_CREDENTIALS = {
-		username: "admin",
-		password: "horizon2024",
+		username: "support",
+		password: "Horizon2025@",
 	};
 
 	const handleLogin = async (e) => {
@@ -197,14 +197,6 @@ const AdminLogin = ({ onLogin }) => {
 								color="text.secondary"
 							>
 								For password assistance, contact IT support
-							</Typography>
-						</Box>
-
-						{/* Development Note */}
-						<Box mt={2} p={2} bgcolor="warning.50" borderRadius={1}>
-							<Typography variant="caption" color="warning.main">
-								<strong>Demo Credentials:</strong> admin /
-								horizon2024
 							</Typography>
 						</Box>
 					</CardContent>

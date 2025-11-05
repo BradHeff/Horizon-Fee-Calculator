@@ -236,21 +236,22 @@ const FeeAdministration = () => {
 
 	const handleSave = () => {
 		if (validateConfiguration()) {
-			// In a real implementation, this would save to the backend/file system
-			const updatedConfig = {
-				...feeData,
-				lastUpdated: new Date().toISOString().split("T")[0],
-				version: `${feeData.settings.academicYear}.${Date.now()}`,
-			};
+			// Update the configuration using the service
+			const success = FeeConfigService.updateConfig(feeData);
 
-			// For demo purposes, we'll just show a success message
-			setSuccessMessage(
-				"Fee configuration updated successfully! Download the updated file below."
-			);
-			setHasChanges(false);
+			if (success) {
+				setSuccessMessage(
+					"Fee configuration updated successfully! Changes are now active for all users."
+				);
+				setHasChanges(false);
 
-			// In production, this would trigger a file download or API call
-			downloadConfiguration(updatedConfig);
+				// Trigger a page reload to refresh all components with new data
+				setTimeout(() => {
+					window.location.reload();
+				}, 2000);
+			} else {
+				setErrors(["Failed to save configuration. Please try again."]);
+			}
 		}
 	};
 
