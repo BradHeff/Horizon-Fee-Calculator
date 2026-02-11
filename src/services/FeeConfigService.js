@@ -1,73 +1,14 @@
 /**
  * Fee Configuration Service
- * Handles dynamic loading of fee structures from configuration files
- * Eliminates need for hardcoded fee constants
+ * Handles loading of fee structures from fee-config.json
  */
 
 import feeConfig from "../data/fee-config.json";
 
 class FeeConfigService {
 	constructor() {
-		this.loadConfig();
-		this.validateConfig();
-	}
-
-	/**
-	 * Load configuration from localStorage or fallback to default
-	 */
-	loadConfig() {
-		try {
-			const savedConfig = localStorage.getItem("horizonFeeConfig");
-			if (savedConfig) {
-				this.config = JSON.parse(savedConfig);
-				console.log("Loaded fee configuration from localStorage");
-			} else {
-				this.config = feeConfig;
-				console.log("Using default fee configuration");
-			}
-		} catch (error) {
-			console.warn("Failed to load saved config, using default:", error);
-			this.config = feeConfig;
-		}
-	}
-
-	/**
-	 * Save current configuration to localStorage
-	 */
-	saveConfig() {
-		try {
-			localStorage.setItem(
-				"horizonFeeConfig",
-				JSON.stringify(this.config)
-			);
-			console.log("Fee configuration saved successfully");
-			return true;
-		} catch (error) {
-			console.error("Failed to save fee configuration:", error);
-			return false;
-		}
-	}
-
-	/**
-	 * Update configuration with new data
-	 * @param {Object} newConfig - New configuration object
-	 */
-	updateConfig(newConfig) {
-		this.config = {
-			...newConfig,
-			lastUpdated: new Date().toISOString().split("T")[0],
-			version: `${newConfig.settings.academicYear}.${Date.now()}`,
-		};
-		return this.saveConfig();
-	}
-
-	/**
-	 * Reset configuration to default
-	 */
-	resetToDefault() {
 		this.config = feeConfig;
-		localStorage.removeItem("horizonFeeConfig");
-		console.log("Fee configuration reset to default");
+		this.validateConfig();
 	}
 
 	/**

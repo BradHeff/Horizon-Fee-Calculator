@@ -1,4 +1,4 @@
-import { NAVBAR, CAMPUS, TOGGLE, B2T, NEXT, AUTH, LOGIN } from "./constants";
+import { NAVBAR, CAMPUS, TOGGLE, B2T, NEXT, AUTH } from "./constants";
 
 export const setNavbar = (link) => ({
   type: NAVBAR,
@@ -27,10 +27,5 @@ export const setNext = (link) => ({
 
 export const setNeedAuth = (link) => ({
   type: AUTH,
-  payload: link,
-});
-
-export const setLogin = (link) => ({
-  type: LOGIN,
   payload: link,
 });

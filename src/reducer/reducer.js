@@ -1,4 +1,4 @@
-import {AUTH,B2T,CAMPUS,LOGIN,NAVBAR,NEXT,TOGGLE} from "./constants";
+import {AUTH,B2T,CAMPUS,NAVBAR,NEXT,TOGGLE} from "./constants";
 
 const initialStateBase = {
   sbar: false,
@@ -7,7 +7,6 @@ const initialStateBase = {
   sidebar: false,
   next: -1, //-1=start,0=downloads,1=certs,2=app,3=extension
   auth: false,
-  login: false,
   campus: null,
 };
 
@@ -25,8 +24,6 @@ export const BaseReducer = (state = initialStateBase, action = {}) => {
       return Object.assign({}, state, { show: action.payload });
     case AUTH:
       return Object.assign({}, state, { auth: action.payload });
-    case LOGIN:
-      return Object.assign({}, state, { login: action.payload });
     default:
       return state;
   }

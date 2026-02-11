@@ -1,8 +1,6 @@
 import { Component } from "react";
 import { connect } from "react-redux";
-import { Navigate, Route, Routes } from "react-router-dom";
-import AdminDashboard from "../Components/Admin/AdminDashboard";
-import AdminLogin from "../Components/Admin/AdminLogin";
+import { Route, Routes } from "react-router-dom";
 import { setB2T, setCampus, setNavbar, setToggle } from "../reducer/action";
 import App from "./App";
 
@@ -28,33 +26,6 @@ class AppRouter extends Component {
 	render() {
 		return (
 			<Routes>
-				{/* Admin Routes */}
-				<Route
-					path="/admin/login"
-					element={
-						this.props.isLoggedIn ? (
-							<Navigate to="/admin/dashboard" replace />
-						) : (
-							<AdminLogin />
-						)
-					}
-				/>
-				<Route
-					path="/admin/dashboard"
-					element={
-						this.props.isLoggedIn ? (
-							<AdminDashboard />
-						) : (
-							<Navigate to="/admin/login" replace />
-						)
-					}
-				/>
-				<Route
-					path="/admin"
-					element={<Navigate to="/admin/login" replace />}
-				/>
-
-				{/* Main App Routes */}
 				<Route path="/" element={<App {...this.props} />} />
 			</Routes>
 		);
@@ -67,7 +38,6 @@ const mapStateToProps = (state) => {
 		toggle: state.BaseReducer.toggle,
 		show: state.BaseReducer.show,
 		campus: state.BaseReducer.campus,
-		isLoggedIn: state.BaseReducer.login,
 	};
 };
 

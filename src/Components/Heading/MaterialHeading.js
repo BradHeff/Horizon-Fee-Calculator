@@ -1,5 +1,4 @@
 import {
-	AdminPanelSettings as AdminIcon,
 	Home as HomeIcon,
 	LocationOn as LocationIcon,
 	Menu as MenuIcon,
@@ -59,12 +58,6 @@ const MaterialHeading = (props) => {
 			icon: <HomeIcon />,
 			url: campusInfo.url,
 			external: true,
-		},
-		{
-			label: "Admin",
-			icon: <AdminIcon />,
-			url: "/admin",
-			external: false,
 		},
 	];
 
