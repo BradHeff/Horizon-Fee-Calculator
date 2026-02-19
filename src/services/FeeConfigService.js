@@ -45,7 +45,7 @@ class FeeConfigService {
 	 * Get staff discount percentage
 	 */
 	getStaffDiscountPercentage() {
-		return this.config.settings.staffDiscountPercentage || 25;
+		return this.config.settings.staffDiscountPercentage || 10;
 	}
 
 	/**

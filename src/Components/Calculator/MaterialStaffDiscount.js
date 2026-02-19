@@ -47,7 +47,7 @@ const MaterialStaffDiscount = ({
 									variant="body2"
 									color="text.secondary"
 								>
-									25% discount for Horizon Christian School
+									10% discount for Horizon Christian School
 									staff members
 								</Typography>
 							</Box>
@@ -61,7 +61,7 @@ const MaterialStaffDiscount = ({
 						sx={{ mt: 2, fontSize: "0.875rem" }}
 					>
 						<Typography variant="body2">
-							<strong>Staff Discount Applied:</strong> 25%
+							<strong>Staff Discount Applied:</strong> 10%
 							reduction on tuition fees. This discount cannot be
 							combined with concession card discounts.
 						</Typography>

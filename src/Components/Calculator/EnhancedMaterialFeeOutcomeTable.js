@@ -201,7 +201,7 @@ const EnhancedMaterialFeeOutcomeTable = ({
 				fee = costs[Math.min(index, 2)] || 0;
 
 				if (hasStaffDiscount && fee > 0) {
-					fee = fee * 0.75; // 25% staff discount
+					fee = fee * 0.90; // 10% staff discount
 				}
 			}
 
@@ -240,7 +240,7 @@ const EnhancedMaterialFeeOutcomeTable = ({
 			appliedDiscounts: {
 				concessionCard: hasConcessionCard,
 				staffDiscount: hasStaffDiscount,
-				staffDiscountPercentage: hasStaffDiscount ? 25 : 0,
+				staffDiscountPercentage: hasStaffDiscount ? 10 : 0,
 			},
 		};
 	}

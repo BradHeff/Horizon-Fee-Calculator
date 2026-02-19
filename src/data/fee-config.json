@@ -4,7 +4,7 @@
 	"description": "Horizon Christian School Fee Structure - Board Approved 2026 Rates",
 
 	"settings": {
-		"staffDiscountPercentage": 25,
+		"staffDiscountPercentage": 10,
 		"currency": "AUD",
 		"paymentFrequency": "per term",
 		"academicYear": "2026"

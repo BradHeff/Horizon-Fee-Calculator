@@ -97,7 +97,7 @@ const MaterialFeeOutcomeTable = ({
 					let fee = costs[Math.min(index, 2)] || 0;
 
 					if (isStaffDiscount && !hasConcessionCard) {
-						fee = fee * 0.75; // 25% staff discount
+						fee = fee * 0.90; // 10% staff discount
 					}
 
 					subtotal += fee;
@@ -198,7 +198,7 @@ const MaterialFeeOutcomeTable = ({
 								tuitionFee = costs[Math.min(index, 2)] || 0;
 
 								if (isStaffDiscount && !hasConcessionCard) {
-									tuitionFee = tuitionFee * 0.75;
+									tuitionFee = tuitionFee * 0.90;
 								}
 							}
 
@@ -339,7 +339,7 @@ const MaterialFeeOutcomeTable = ({
 						{isStaffDiscount && (
 							<Chip
 								icon={<DiscountIcon />}
-								label="Staff Discount (25%)"
+								label="Staff Discount (10%)"
 								color="success"
 								size="small"
 							/>
