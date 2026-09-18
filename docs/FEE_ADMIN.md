@@ -4,7 +4,8 @@ The local admin panel is at `/admin`. It uses a server-authenticated account; it
 
 ## Using the panel
 
-1. Sign in with the configured username and password.
+1. Sign in with the configured username and password. Use **Choose draft** at the top to switch between saved fee schedules. The previous single draft is preserved as **Existing draft**.
+   To start another schedule, enter a **New draft name** and click **Create draft from these figures**. This saves a separate copy of the displayed values, including unsaved pricing edits. Rename the selected draft using **Draft name**, then **Save draft**. Switching warns before discarding unsaved edits. **Delete selected draft** permanently removes that saved draft after confirmation, without changing published fees. At least one draft must remain; create another first if needed. Publishing and resetting apply only to the selected draft.
 2. Set the academic year and an optional schedule label (for example `2027 · Term 1`). The label does not schedule activation or prorate annual fees.
 3. Choose Balaklava or Clare, then Standard or School Card tuition. Enter the exact schedule values for each child column. A grouped row updates every year in that group. If individual year amounts differ, those years appear separately so nothing is silently overwritten.
 4. Update resource levies and bus fees; these are shared by the two campuses. The fourth-child value applies to fourth and subsequent children. Zero remains a valid amount.
@@ -21,7 +22,7 @@ No 2027 schedule has been imported or published by this implementation. The exis
 - `src/data/fee-config.json`: checked-in initial 2026 schedule; used only to initialise a new database.
 - MongoDB database `horizon_fee_calculator`, collection `fee_schedules`, document `current`: published schedule, draft, revision and the last 30 published backups.
 - MongoDB collection `administrators`: the `ict` admin account and salted scrypt password hash. Passwords are never stored as plaintext.
-- The public calculator fetches **only the published schedule** from `/api/fees?action=live`, on entry, on window focus and every 60 seconds. Updates need no frontend rebuild. If loading fails, the calculator shows an error instead of silently quoting stale bundled rates.
+- The public calculator fetches **only the published schedule** from `/api/fees?action=live`, on entry, on window focus and every 15 seconds. Updates need no frontend rebuild. If loading fails, the calculator shows an error instead of silently quoting stale bundled rates.
 - Admin changes are validated server-side. Account and discount policies are not editable through the fee API. Saving uses an atomic MongoDB revision check to prevent overwriting another administrator's changes.
 
 ## Current setup status
@@ -97,3 +98,11 @@ CI=true npm test -- --watchAll=false --runInBand
 Server tests use an isolated temporary directory and random test credentials. They cover authentication, CSRF/origin checks, validation, draft isolation, persistence, explicit publishing, conflict detection, logout and login throttling. Frontend tests cover manual/percentage edits, rounding, campus scope and calculator totals including fourth/subsequent-child rates.
 
 The MongoDB integration test uses a uniquely named temporary collection in the configured fee database and removes it afterwards. It verifies persistence, publishing and concurrent revision checks without changing the actual fee schedule.
+
+## Maintenance mode
+
+The **Maintenance mode** switch at the top of Admin takes effect immediately and is stored in MongoDB independently of fee drafts. When on, unauthenticated visitors see **Calculator under Maintenance. Check back in a few minutes.** and the live-fee endpoint returns 503 without fee data. Administrators signed in through the frontend origin can continue using the published calculator. The admin sign-in page remains accessible. Existing pages refresh access every 15 seconds and on focus. Turning maintenance off restores public access without changing fees. Switching preserves unsaved draft edits.
+
+## Testing draft fees in the calculator
+
+During maintenance, signed-in administrators see **Fees to test** above the calculator. Choose a saved draft to calculate using its prices, or choose **Published fees** to compare. Family selections are retained. Previewing is read-only and does not publish. When maintenance is off the selector is hidden and the backend refuses preview requests, even for administrators. Existing preview pages return to published fees on the next access refresh (within 15 seconds or on focus). If the session expires while maintenance remains on, the maintenance message replaces the calculator.

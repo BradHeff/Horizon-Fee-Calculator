@@ -28,7 +28,6 @@ function createApp({
 		});
 		res.end(JSON.stringify(data));
 	};
-	const publicView = async () => (await store.view()).live;
 	return http.createServer(async (req, res) => {
 		res.setHeader("X-Content-Type-Options", "nosniff");
 		res.setHeader("X-Frame-Options", "DENY");
@@ -85,8 +84,26 @@ function createApp({
 			const session = sessions.get(token);
 			const action = url.searchParams.get("action");
 			if (req.method === "GET") {
-				if (action === "live")
-					return json(res, 200, { config: await publicView() });
+				if (action === "live") {
+                    const current = await store.view();
+                    if (current.maintenance && !session) {
+                        res.setHeader("Retry-After", "60");
+                        return json(res, 503, {maintenance:true, error:"Calculator under Maintenance. Check back in a few minutes."});
+                    }
+                    return json(res, 200, {config:current.live, maintenance:current.maintenance,
+                        ...(current.maintenance && session ? {drafts:current.drafts} : {})});
+                }
+                if (action === "preview") {
+                    if (!session) return json(res, 401, {error:"Sign in to preview drafts."});
+                    const current = await store.view();
+                    if (!current.maintenance) return json(res, 403, {error:"Draft previews are only available during maintenance."});
+                    const id = url.searchParams.get("draftId");
+                    if (!id) return json(res, 400, {error:"Select a draft to preview."});
+                    const selected = await store.view(id);
+                    if (!selected.maintenance) return json(res, 403, {error:"Maintenance has ended."});
+                    return json(res, 200, {config:selected.draft, maintenance:true, drafts:selected.drafts,
+                        preview:{id:selected.draftId,name:selected.draftName}});
+                }
 				if (action === "session")
 					return json(res, 200, {
 						authenticated: Boolean(session),
@@ -94,7 +111,7 @@ function createApp({
 					});
 				if (action === "admin")
 					return session
-						? json(res, 200, await store.view())
+						? json(res, 200, await store.view(url.searchParams.get("draftId")))
 						: json(res, 401, { error: "Please sign in to manage fees." });
 				return json(res, 404, { error: "Not found." });
 			}
@@ -104,7 +121,7 @@ function createApp({
 				return json(res, 403, { error: "Request origin is not allowed." });
 			if (!(req.headers["content-type"] || "").startsWith("application/json"))
 				return json(res, 415, { error: "JSON requests required." });
-			if (!["login", "logout", "save", "publish"].includes(action))
+			if (!["login", "logout", "save", "publish", "create", "delete", "maintenance"].includes(action))
 				return json(res, 404, { error: "Not found." });
 			if (action !== "login" && !session)
 				return json(res, 401, {

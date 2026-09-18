@@ -36,6 +36,12 @@ export default function AdminPanel() {
 	const [password, setPassword] = useState("");
 	const [config, setConfig] = useState(null);
 	const [saved, setSaved] = useState(null);
+	const [maintenance, setMaintenance] = useState(false);
+	const [drafts, setDrafts] = useState([]);
+	const [draftId, setDraftId] = useState("");
+	const [draftName, setDraftName] = useState("");
+	const [savedName, setSavedName] = useState("");
+	const [newDraftName, setNewDraftName] = useState("");
 	const [revision, setRevision] = useState("");
 	const [liveYear, setLiveYear] = useState("");
 	const [liveConfig, setLiveConfig] = useState(null);
@@ -47,10 +53,15 @@ export default function AdminPanel() {
 	const [undo, setUndo] = useState(null);
 	const [publishReview, setPublishReview] = useState(false);
 	const dirty =
-		config && saved && JSON.stringify(config) !== JSON.stringify(saved);
+		config && saved && (JSON.stringify(config) !== JSON.stringify(saved) || draftName !== savedName);
 	const campusLabel = campus === "balaklava" ? "Balaklava" : "Clare";
 
 	function loadEditor(data) {
+		setMaintenance(data.maintenance === true);
+		setDrafts(data.drafts || []);
+		setDraftId(data.draftId);
+		setDraftName(data.draftName);
+		setSavedName(data.draftName);
 		setConfig(data.draft);
 		setSaved(clone(data.draft));
 		setRevision(data.revision);
@@ -123,14 +134,14 @@ export default function AdminPanel() {
 	async function save(event) {
 		event.preventDefault();
 		await run(async () => {
-			loadEditor(await adminApi("save", { config, revision }));
+			loadEditor(await adminApi("save", { config, revision, draftId, name: draftName }));
 			setNotice("Draft saved. The public calculator has not changed.");
 		});
 	}
 	async function resetDraft() {
 		if (!window.confirm(`Replace the saved draft and any unsaved edits with the currently published ${liveYear} fees? This saves the reset immediately. Public fees will not change.`)) return;
 		await run(async () => {
-			loadEditor(await adminApi("save", { config: liveConfig, revision }));
+			loadEditor(await adminApi("save", { config: liveConfig, revision, draftId, name: savedName }));
 			setNotice("Draft reset to the published fees and saved. The public calculator has not changed.");
 		});
 	}
@@ -252,7 +263,46 @@ export default function AdminPanel() {
 							</div>
 							<form onSubmit={save}>
 								<fieldset disabled={busy} className="admin-form-fields">
-									<section className="fee-panel admin-section admin-settings">
+									<section className="fee-panel admin-section">
+ <h2>Calculator access</h2>
+ <button type="button" role="switch" aria-checked={maintenance} onClick={() => {
+ if (!maintenance && !window.confirm("Turn maintenance on? Visitors will see the maintenance message. Signed-in administrators can still use the calculator.")) return;
+ run(async () => {
+ const data = await adminApi("maintenance", {enabled: !maintenance, revision, draftId});
+ setMaintenance(data.maintenance); setRevision(data.revision);
+ setNotice(data.maintenance ? "Maintenance is on. Only signed-in administrators can use the calculator." : "Maintenance is off. The calculator is open to everyone.");
+ });
+ }}>Maintenance mode: {maintenance ? "On" : "Off"}</button>
+ <p>{maintenance ? "Visitors see: Calculator under Maintenance. Check back in a few minutes." : "The public calculator is available to everyone."} Changes apply immediately; already-open pages update within 15 seconds.</p>
+ </section>
+ <section className="fee-panel admin-section">
+ <h2>Fee drafts</h2>
+ <div className="admin-increase">
+ <label>Choose draft<select value={draftId} onChange={event => {
+ const id = event.target.value;
+ if (dirty && !window.confirm("Switch drafts and discard unsaved edits? Your saved draft will be kept.")) return;
+ run(async () => { loadEditor(await adminApi("admin", undefined, id)); setPercent(""); });
+ }}>{drafts.map(d => <option key={d.id} value={d.id}>{d.name} · {d.year}</option>)}</select></label>
+ <label>Draft name<input value={draftName} maxLength={80} onChange={e => {setDraftName(e.target.value);setPublishReview(false);}} /></label>
+ <button type="button" className="admin-delete" disabled={drafts.length <= 1} onClick={() => {
+ if (!window.confirm(`Delete the saved draft "${savedName}"? This also discards any unsaved edits. This cannot be undone. Published fees will not change.`)) return;
+ run(async () => {
+ loadEditor(await adminApi("delete", { revision, draftId }));
+ setPercent(""); setNotice("Draft deleted. Published fees have not changed.");
+ });
+ }}>Delete selected draft</button>
+ </div>
+ <div className="admin-increase">
+ <label>New draft name<input value={newDraftName} maxLength={80} onChange={e => setNewDraftName(e.target.value)} placeholder="e.g. 2027 fees" /></label>
+ <button type="button" disabled={!newDraftName.trim()} onClick={() => run(async () => {
+ loadEditor(await adminApi("create", { revision, name:newDraftName, config }));
+ setNewDraftName(""); setPercent(""); setNotice("New draft created from the displayed figures. Other drafts and public fees are unchanged.");
+ })}>Create draft from these figures</button>
+ </div>
+ {drafts.length <= 1 && <p>Keep at least one draft. Create another draft before deleting this one.</p>}
+ <p>Choose a saved draft, or create a separate copy of the figures below. Publishing uses only the selected draft.</p>
+ </section>
+ <section className="fee-panel admin-section admin-settings">
 										<label>
 											Academic year
 											<input
@@ -573,6 +623,7 @@ export default function AdminPanel() {
 													window.confirm("Undo edits made since the last save? The saved draft will be kept.")
 												) {
 													edit(clone(saved));
+													setDraftName(savedName);
 													setUndo(null);
 												}
 											}}
@@ -617,7 +668,7 @@ export default function AdminPanel() {
 										disabled={busy}
 										onClick={() =>
 											run(async () => {
-												loadEditor(await adminApi("publish", { revision }));
+												loadEditor(await adminApi("publish", { revision, draftId }));
 												setNotice(
 													"Fees published. The public calculator now uses this schedule.",
 												);

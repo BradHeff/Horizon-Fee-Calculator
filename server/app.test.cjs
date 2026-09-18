@@ -20,7 +20,7 @@ test("authenticated drafts persist, publish explicitly, and reject unsafe/stale 
 	const fixture = createStore(directory);
 	const app = createApp({
 		store: {
-			view: async () => fixture.view(),
+			view: async (...args) => fixture.view(...args),
 			change: async (...args) => fixture.change(...args),
 		},
 		auth: async () => auth,
@@ -59,7 +59,37 @@ test("authenticated drafts persist, publish explicitly, and reject unsafe/stale 
 	assert.match(login.headers.get("set-cookie"), /HttpOnly; SameSite=Strict/);
 	cookie = login.headers.get("set-cookie").split(";")[0];
 	csrf = (await login.json()).csrfToken;
-	const original = await (await request("admin")).json();
+	let original = await (await request("admin")).json();
+    const maintenancePayload = {revision:original.revision,enabled:true,draftId:original.draftId};
+    assert.equal((await request("maintenance",maintenancePayload,{Cookie:""})).status,401);
+    assert.equal((await request("maintenance",maintenancePayload,{"X-CSRF-Token":"bad"})).status,403);
+    assert.equal((await request("maintenance",{...maintenancePayload,enabled:"true"})).status,422);
+    const enabled = await (await request("maintenance",maintenancePayload)).json();
+    assert.equal(enabled.maintenance,true);
+    assert.equal(createStore(directory).view().maintenance,true);
+    assert.deepEqual(enabled.draft,original.draft);
+    assert.deepEqual(enabled.live,original.live);
+    const blocked = await request("live",undefined,{Cookie:""});
+    assert.equal(blocked.status,503);
+    assert.equal(blocked.headers.get("cache-control"),"no-store");
+    const blockedBody = await blocked.json();
+    assert.equal(blockedBody.maintenance,true);
+    assert.equal(blockedBody.config,undefined);
+    assert.equal((await request("live")).status,200);
+    assert.equal((await request("preview&draftId=original",undefined,{Cookie:""})).status,401);
+    const preview = await (await request("preview&draftId=original")).json();
+    assert.equal(preview.preview.id,"original");
+    assert.deepEqual(preview.config,original.draft);
+    assert.equal((await request("preview&draftId=missing")).status,404);
+    assert.equal((await request("preview")).status,400);
+    assert.equal((await (await request("live")).json()).drafts.length,1);
+
+    assert.equal((await request("maintenance",maintenancePayload)).status,409);
+    original = await (await request("maintenance",{revision:enabled.revision,enabled:false,draftId:enabled.draftId})).json();
+    assert.equal((await request("live",undefined,{Cookie:""})).status,200);
+    assert.equal((await request("preview&draftId=original")).status,403);
+    assert.equal((await (await request("live")).json()).drafts,undefined);
+
 	const config = structuredClone(original.draft);
 	config.settings.academicYear = "2027";
 	config.settings.scheduleLabel = "2027 · Term 1";

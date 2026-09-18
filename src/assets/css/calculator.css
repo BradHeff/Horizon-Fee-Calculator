@@ -805,3 +805,15 @@
 		width: 38px;
 	}
 }
+
+/* An admin notice is a compact row, not a full-height calculator page. */
+.fee-page.fee-maintenance-notice {
+ min-height: 0;
+ padding-top: 12px;
+ padding-bottom: 0;
+ font-size: 13px;
+ line-height: 1.5;
+}
+
+.fee-preview-selector { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-weight: 600; }
+.fee-preview-selector select { max-width: 100%; min-height: 44px; border: 1px solid #cbd6cc; border-radius: 8px; background: white; color: #203e32; padding: 8px 12px; }

@@ -316,3 +316,6 @@
 		width: 100%;
 	}
 }
+
+.admin-shell .admin-delete { color: #8b3028; border-color: #deaca5; }
+.admin-shell .admin-delete:hover { background: #fff0ee; }

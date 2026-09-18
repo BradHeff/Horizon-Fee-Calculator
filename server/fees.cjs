@@ -54,6 +54,53 @@ function validate(input) {
 	};
 	return next;
 }
+function draftList(state) {
+ return state.drafts || [{ id: "original", name: "Existing draft", config: state.draft }];
+}
+function draftView(state, id) {
+ const drafts = draftList(state);
+ const selected = id ? drafts.find(d => d.id === id) : drafts[0];
+ if (!selected) fail("Draft not found. Reload the page.", 404);
+ return { maintenance: state.maintenance === true, live: state.live, draft: selected.config, draftId: selected.id, draftName: selected.name,
+  drafts: drafts.map(d => ({ id:d.id, name:d.name, year:d.config.settings.academicYear })), revision:state.revision };
+}
+function changeDraft(state, action, input) {
+ if (action === "maintenance") {
+  if (typeof input.enabled !== "boolean") fail("Maintenance must be on or off.");
+  const selected = draftView(state, input.draftId);
+  state.maintenance = input.enabled;
+  return selected.draftId;
+ }
+ state.drafts = draftList(state);
+ let selected;
+ if (action === "create") {
+  if (state.drafts.length >= 50) fail("A maximum of 50 drafts is supported.");
+  selected = { id:crypto.randomUUID(), config:validate(input.config) };
+ } else {
+  if (!input.draftId && state.drafts.length > 1) fail("Reload the admin panel to select a draft.", 409);
+  selected = state.drafts.find(d => d.id === (input.draftId || state.drafts[0].id));
+  if (!selected) fail("Draft not found. Reload the page.", 404);
+ }
+ if (action === "create" || action === "save") {
+  const name = input.name === undefined && action === "save" ? selected.name : input.name;
+  if (typeof name !== "string" || !name.trim() || name.trim().length > 80) fail("Enter a draft name of 1–80 characters.");
+  if (state.drafts.some(d => d.id !== selected.id && d.name.toLowerCase() === name.trim().toLowerCase())) fail("Choose a different draft name; that name already exists.");
+  selected.name = name.trim();
+  selected.config = validate(input.config);
+  if (action === "create") state.drafts.push(selected);
+ } else if (action === "delete") {
+  if (!input.draftId) fail("Select a draft to delete.");
+  if (state.drafts.length <= 1) fail("Keep at least one draft. Create another draft before deleting this one.");
+  state.drafts = state.drafts.filter(d => d.id !== selected.id);
+  selected = state.drafts[0];
+ } else if (action === "publish") {
+  state.history = [...state.history, {publishedAt:new Date().toISOString(), config:state.live}].slice(-30);
+  state.live = structuredClone(selected.config);
+ } else fail("Unknown action.", 400);
+ // Retain the original draft field for compatibility with backups.
+ state.draft = state.drafts[0].config;
+ return selected.id;
+}
 function createStore(directory) {
 	fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
 	const file = path.join(directory, "fees.json");
@@ -72,10 +119,7 @@ function createStore(directory) {
 			history: [],
 		});
 	const read = () => JSON.parse(fs.readFileSync(file, "utf8"));
-	const view = () => {
-		const { live, draft, revision } = read();
-		return { live, draft, revision };
-	};
+	const view = (id) => draftView(read(), id);
 	function change(action, input) {
 		const state = read();
 		if (input?.revision !== state.revision)
@@ -83,18 +127,11 @@ function createStore(directory) {
 				"Another administrator changed this draft. Reload the page before editing again.",
 				409,
 			);
-		if (action === "save") state.draft = validate(input.config);
-		else {
-			state.history = [
-				...state.history,
-				{ publishedAt: new Date().toISOString(), config: state.live },
-			].slice(-30);
-			state.live = state.draft;
-		}
+		const id = changeDraft(state, action, input);
 		state.revision = crypto.randomUUID();
 		write(state);
-		return view();
+		return view(id);
 	}
 	return { read, view, change };
 }
-module.exports = { createStore, validate };
+module.exports = { createStore, validate, draftView, changeDraft };

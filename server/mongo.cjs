@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { MongoClient } = require("mongodb");
-const { validate } = require("./fees.cjs");
+const { draftView, changeDraft } = require("./fees.cjs");
 const seed = require("../src/data/fee-config.json");
 
 async function connectDatabase() {
@@ -53,10 +53,7 @@ async function createMongoStore(db, collectionName = "fee_schedules") {
 		if (!state) throw new Error("Fee schedule is missing.");
 		return state;
 	};
-	const view = async () => {
-		const { live, draft, revision } = await read();
-		return { live, draft, revision };
-	};
+	const view = async (id) => draftView(await read(), id);
 	async function change(action, input) {
 		const state = await read();
 		const conflict = () =>
@@ -71,14 +68,7 @@ async function createMongoStore(db, collectionName = "fee_schedules") {
 			input.revision !== state.revision
 		)
 			throw conflict();
-		if (action === "save") state.draft = validate(input.config);
-		else {
-			state.history = [
-				...state.history,
-				{ publishedAt: new Date().toISOString(), config: state.live },
-			].slice(-30);
-			state.live = state.draft;
-		}
+		const id = changeDraft(state, action, input);
 		const oldRevision = state.revision;
 		state.revision = crypto.randomUUID();
 		// One atomic compare-and-swap also works on a standalone MongoDB server.
@@ -87,7 +77,7 @@ async function createMongoStore(db, collectionName = "fee_schedules") {
 			state,
 		);
 		if (result.matchedCount !== 1) throw conflict();
-		return { live: state.live, draft: state.draft, revision: state.revision };
+		return draftView(state, id);
 	}
 	return { read, view, change };
 }

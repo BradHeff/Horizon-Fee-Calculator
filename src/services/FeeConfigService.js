@@ -11,18 +11,21 @@ class FeeConfigService {
 		this.validateConfig();
 	}
 
-	async loadPublished() {
-		const response = await fetch("/api/fees?action=live", {
-			cache: "no-store",
-		});
-		if (!response.ok)
-			throw new Error("Fees are temporarily unavailable. Please try again.");
-		const data = await response.json();
-		if (!data.config?.feeStructure || !data.config?.settings)
-			throw new Error("Unable to load the current fee schedule.");
-		this.config = data.config;
-		return this.config;
-	}
+	async loadPublished(draftId = "", signal) {
+        const url = draftId ? `/api/fees?action=preview&draftId=${encodeURIComponent(draftId)}` : "/api/fees?action=live";
+        const response = await fetch(url, {cache:"no-store", credentials:"same-origin", signal});
+        // Maintenance ended, session expired, or the selected draft was deleted.
+        // Re-check public access instead of retaining draft prices.
+        if (draftId && [401,403,404].includes(response.status)) return this.loadPublished("", signal);
+        const data = await response.json();
+        if (!response.ok) {
+            const error = new Error("Fees are temporarily unavailable. Please try again.");
+            error.maintenance = data.maintenance === true;
+            throw error;
+        }
+        if (!data.config?.feeStructure || !data.config?.settings) throw new Error("Unable to load the current fee schedule.");
+        return data;
+    }
 
 	/**
 	 * Validates the fee configuration structure

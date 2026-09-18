@@ -1,7 +1,7 @@
 let csrfToken = "";
-export async function adminApi(action, payload) {
+export async function adminApi(action, payload, draftId) {
 	const response = await fetch(
-		`/api/fees?action=${encodeURIComponent(action)}`,
+		`/api/fees?action=${encodeURIComponent(action)}${draftId ? `&draftId=${encodeURIComponent(draftId)}` : ""}`,
 		{
 			method: payload === undefined ? "GET" : "POST",
 			credentials: "same-origin",
