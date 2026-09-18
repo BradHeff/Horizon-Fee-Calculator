@@ -11,6 +11,19 @@ class FeeConfigService {
 		this.validateConfig();
 	}
 
+	async loadPublished() {
+		const response = await fetch("/api/fees?action=live", {
+			cache: "no-store",
+		});
+		if (!response.ok)
+			throw new Error("Fees are temporarily unavailable. Please try again.");
+		const data = await response.json();
+		if (!data.config?.feeStructure || !data.config?.settings)
+			throw new Error("Unable to load the current fee schedule.");
+		this.config = data.config;
+		return this.config;
+	}
+
 	/**
 	 * Validates the fee configuration structure
 	 */
@@ -24,7 +37,7 @@ class FeeConfigService {
 		}
 
 		console.log(
-			`Fee Configuration Loaded: Version ${this.config.version} (${this.config.settings.academicYear})`
+			`Fee Configuration Loaded: Version ${this.config.version} (${this.config.settings.academicYear})`,
 		);
 	}
 
@@ -45,7 +58,7 @@ class FeeConfigService {
 	 * Get staff discount percentage
 	 */
 	getStaffDiscountPercentage() {
-		return this.config.settings.staffDiscountPercentage || 10;
+		return this.config.settings.staffDiscountPercentage ?? 10;
 	}
 
 	/**
@@ -95,7 +108,7 @@ class FeeConfigService {
 		childNumber,
 		campus,
 		hasConcessionCard = false,
-		isStaff = false
+		isStaff = false,
 	) {
 		const feeType = hasConcessionCard ? "concession" : "standard";
 		const fees = this.getTuitionFees(campus, feeType);
@@ -170,7 +183,7 @@ class FeeConfigService {
 		hasConcessionCard = false,
 		isStaff = false,
 		hasBusFee = false,
-		hasResourceFee = true
+		hasResourceFee = true,
 	) {
 		let totalTuition = 0;
 		let totalBus = 0;
@@ -184,7 +197,7 @@ class FeeConfigService {
 				childNumber,
 				campus,
 				hasConcessionCard,
-				isStaff
+				isStaff,
 			);
 
 			const busFee = hasBusFee ? this.getBusFeeForChild(childNumber) : 0;
@@ -229,16 +242,12 @@ class FeeConfigService {
 	 */
 	getLegacyConstants() {
 		const balaklavaStandard = this.getTuitionFees("balaklava", "standard");
-		const balaklavaConcession = this.getTuitionFees(
-			"balaklava",
-			"concession"
-		);
+		const balaklavaConcession = this.getTuitionFees("balaklava", "concession");
 		const clareStandard = this.getTuitionFees("clare", "standard");
 		const clareConcession = this.getTuitionFees("clare", "concession");
 
 		return {
-			staffDiscountPercentage:
-				(100 - this.getStaffDiscountPercentage()) / 100,
+			staffDiscountPercentage: (100 - this.getStaffDiscountPercentage()) / 100,
 			yearLevels: this.getYearLevels(),
 			standardCosts: balaklavaStandard,
 			standardCostsClare: clareStandard,

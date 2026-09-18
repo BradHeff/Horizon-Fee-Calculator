@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Private fee data and credential hashes
+/server/private/
+
+# Deployment archives and staging
+/dist/

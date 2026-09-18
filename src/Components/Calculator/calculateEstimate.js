@@ -10,19 +10,15 @@ export const calculateEstimate = (children, campus, concession, staff, bus) => {
 		.filter(Boolean)
 		.sort((a, b) => levels.indexOf(b) - levels.indexOf(a))
 		.map((yearLevel, index) => {
-			const tuition =
-				index < 3
-					? FeeConfigService.getFeeForChild(
-							yearLevel,
-							index + 1,
-							campus,
-							concession,
-							staff && !concession,
-						)
-					: 0;
+			const tuition = FeeConfigService.getFeeForChild(
+				yearLevel,
+				index + 1,
+				campus,
+				concession,
+				staff && !concession,
+			);
 			const resources = FeeConfigService.getResourceFeeForYear(yearLevel);
-			const transport =
-				bus && index < 3 ? FeeConfigService.getBusFeeForChild(index + 1) : 0;
+			const transport = bus ? FeeConfigService.getBusFeeForChild(index + 1) : 0;
 			return {
 				yearLevel,
 				tuition,

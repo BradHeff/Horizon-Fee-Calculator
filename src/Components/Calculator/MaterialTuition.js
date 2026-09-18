@@ -254,7 +254,7 @@ const MaterialTuition = ({ campus, onSetCampus }) => {
 						</div>
 						<p>
 							{hasResults
-								? `${campusName} · ${estimate.breakdown.length} ${estimate.breakdown.length === 1 ? "child" : "children"} · ${academicYear}`
+								? `${campusName} · ${estimate.breakdown.length} ${estimate.breakdown.length === 1 ? "child" : "children"} · ${FeeConfigService.config.settings.scheduleLabel || academicYear}`
 								: "Build an estimate for your family"}
 						</p>
 						<div className="fee-total-note">

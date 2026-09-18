@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import { setB2T, setCampus, setNavbar, setToggle } from "../reducer/action";
 import App from "./App";
+import AdminPanel from "../Components/Admin/AdminPanel";
 
 class AppRouter extends Component {
 	componentDidMount() {
@@ -27,6 +28,7 @@ class AppRouter extends Component {
 		return (
 			<Routes>
 				<Route path="/" element={<App {...this.props} />} />
+				<Route path="/admin" element={<AdminPanel />} />
 			</Routes>
 		);
 	}
